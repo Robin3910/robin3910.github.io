@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ch">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme-color" content=#58b77a>
+  <title>移动端适配总结 | ROBIN-3910</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="rob-曾洛镔">
+  <meta name="keywords" content="">
+  <meta name="description" content="rob的个人博客网站，记录编码/学习/生活日常">
+  <script id="hexo-configurations">
+  var CONFIG = {
+    root: '/',
+    theme: 'lx',
+    version: '0.3.9',
+    localsearch: {
+      "enable": 'false',
+      "trigger": "auto",
+      "top_n_per_article": "1",
+      "unescape": 'false',
+      "preload": 'false'
+    },
+    path: '-'
+  };
+</script>
+
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/css/main.min.css">
+  <style type="text/css">
+    pre,
+    code {
+      font-family: 'Fira Code', monospace;
+    }
+    html {
+      font-family: sans-serif;
+    }
+    body {
+      font-family: sans-serif;
+    }
+    h1, h2, h3, h4, h5, figure {
+      font-family: sans-serif;
+    }
+    .menu-container{
+      font-family: sans-serif;
+    }
+  </style>
+
+  <script src="//cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/js/jquery.jside.menu.js"></script>
+	<script>
+	$(document).ready(function(){
+	$(".menu-container").jSideMenu({
+	    jSidePosition: "position-right",
+	    jSideSticky: true,
+	    jSideSkin: "greenish",
+	     });
+	}); 
+	</script>
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Fira Code:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+<div class="single">
+
+<div id="page">
+<div id="lx-aside" style="background-image: url(//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/images/post_cover.jpeg)" data-stellar-background-ratio="0.5">
+  <div class="overlay">
+  <div class="page-title">
+    <div class="avatar"><a href="/"><img style="width: 100px;height: 100px;" src="/images/avatar.jpeg"></a></div>
+    <span>2021-05-07</span>
+    <h2>移动端适配总结</h2>
+    
+    <div class="social-links">
+    <a href="https://github.com/Robin3910" target="_blank"><i class="fa fa-github fa-fw"></i></a>
+    <a href="robin3910@163.com" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+</div></div>
+</div>
+</div>
+
+<div id="lx-main-content">
+  <div class="lx-post">
+    <div class="lx-entry padding">
+      <div>
+        <p>如果下面这行代码经常见到，但又对其一知半解，那么这篇文章也许可以帮你解惑</p>
+<p><meta name="viewport" content="width=device-width, initial-scale="1.0""></meta name="viewport" content="width=device-width,></p>
+<p>一、基础知识梳理<br>1、像素<br>a.物理像素<br>物理像素也就是移动设备中所提到的分辨率，比如手机的分辨率为750x1334像素，其指的是屏幕的垂直方向上有1334个物理像素块，水平方向上有750个像素块。其分辨率越高，所展示的图像就越清晰。</p>
+<p>b.设备独立像素(device-independent pixels)/CSS像素<br>设备的独立像素，不同于物理像素，更多指的是设计稿中的尺寸，比如设计稿中一个Img的宽高为100x100像素，这个就是独立像素，也对应于css像素，是虚拟化的.</p>
+<p>那么，可能会有疑问，这手机分辨率有750x1334像素，但是屏幕大小只有375x667像素，这两者有什么关系呢？</p>
+<p>这里就需要引入css像素，也就是设备独立像素。css像素中1px可以代表多个物理像素，在dpr为2的手机中，CSS1px可以对应2个物理像素，也就是相比于分辨率为375x667的手机来说，750x1334分辨率的手机会更加清晰细腻。</p>
+<p>如下图所示：这是dpr=2的情况，最外框为css的1px，但其却覆盖了4个物理像素（蓝色的小方块）</p>
+<p>当用户缩小时：物理像素（蓝色小方块）是不会改变的，此时一个物理像素从原来只覆盖1/4的CSS像素变成了可覆盖大于7/10的CSS像素，相当于一个物理像素所能展示的CSS像素更多，所以用户所能看到的内容也更多，但图像变小</p>
+<p>反之，当用户放大时：原来一个CSS像素仅需要4个物理像素便能展示，放大后一个CSS像素所需的物理像素可能要8-9个（大概），所以能展示的CSS像素变少，图像变大，用户所能看到的内容也就变少了</p>
+<p>2、设备像素比dpr<br>dpr=物理像素/独立像素，通过js可以获取：window.devicesPixelRatio。</p>
+<p>二、视口viewport<br>PC与移动端的视口viewport<br>PC端视口<br>在html、body设置width:100%;height:100%;的时候，它并不是无效的。100%这种百分数应该是继承父元素而来的。那在这里是继承哪里的呢？</p>
+<p>在PC浏览器中，有一个用来约束CSS布局视口的东西，又叫做初始包含块。这也就是所有宽高继承的由来。除去margin、padding，浏览器布局视口layout viewport和可视窗口visual viewport宽高是一致的，统称为视口viewport，同时也和浏览器本身的宽度一致。</p>
+<p>举个例子：下图中，当前浏览器的宽度1365px，则相应的body宽度也为1365px，文字显示正常，阅读无障碍</p>
+<p>通过document.documentElement.clientWidth可以获取布局视口。</p>
+<p>移动端<br>布局视口</p>
+<p>在移动端，默认的情况下，移动端浏览器厂商为了让用户在小屏幕下传统的PC网页也能够很好地展示，一般会把布局视口宽度设置地很大去存放页面，在768px ~ 1024px之间，最常见的宽度是980px。这个宽度可以通过document.documentElement.clientWidth得到。</p>
+<p>视觉视口</p>
+<p>对于视觉视口来说，这个东西是呈现给用户的，它是用户看到网页区域内CSS像素的数量。（CSS像素的数量越多，说明展示的页面元素越多，看到的页面元素也就越小）</p>
+<p>值得注意的是，在移动端缩放不会改变布局视口的宽度，当缩小的时候，屏幕覆盖的css像素变多，视觉视口变大，看到的字体图形字体变小，反之亦然。</p>
+<p>而在PC端，缩放对应布局宽度和视觉窗口宽度都是联动的。而浏览器宽度本身是固定的，无论怎么缩放都不受影响。</p>
+<p>视口缺陷<br>从上图可以看到，用户手机屏幕所展示的内容（visual viewport）仅占了layout viewport的一部分，并不能全部展示出来。</p>
+<p>通过chrome模拟出手机的屏幕</p>
+<p>如上图所示，布局视口的宽度（这里body被默认设置成了980px）是要远远大于移动端浏览器的宽度(360px)的。大多数浏览器会默认铺开整个布局视口到整个屏幕中，导致页面中的字体非常小，阅读体验非常差。</p>
+<p>试想一下，如果一个网页不对移动端进行适配，用户进行阅读的时候，由于字体太小，就不得不手动放大以便于阅读，但是放大的时候另外一个问题又出现了：</p>
+<p>从上图中可以看到，虽然文字变大了，但是相应的，屏幕中所显示的信息也变少了，用户需要手动去滑动整个页面让目标信息展示出来。</p>
+<p>(这个二维码阅读体验极差，可以扫码体验一下)</p>
+<p>此时，我们可以通过<meta name="viewport" content="width=360">来设置layout viewport的宽度为360，此时，body的大小变成了360px，字体大小为14px，显而易见，body为360px下显示14px的字体和body为980px下显示14px的字体，肯定前者显示更加友好</meta name="viewport" content="width=360"></p>
+<p>（扫我吧，我字贼大：）</p>
+<p>理想视口<br>所以后来苹果引入了理想视口的概念，它对设备来说是最理想的布局视口尺寸，用户进入页面时就不需要手动再去缩放页面。</p>
+<p>所以便有了这段代码：</p>
+<p><meta name="viewport" content="width=device-width, initial-scale="1.0""></meta name="viewport" content="width=device-width,></p>
+<p>width=device-width： 把布局视口设置成为浏览器（屏幕）的宽度。</p>
+<p>initial-scale=1 ：初始缩放的比例是1，使用它的时候，同时也会将布局视口的尺寸设置为初始缩放比例后的尺寸。而缩放的尺寸就是基于屏幕的宽度来的，也就起到了和width=device-width同样的效果。</p>
+<p>每个移动设备浏览器中都有一个理想的宽度，这个理想的宽度是指css中的宽度，跟设备的物理宽度没有关系，在css中，这个宽度就相当于100%的所代表的那个宽度（这个其实就是devices-width）。</p>
+<p>我们可以用meta标签把viewport的宽度设为那个理想的宽度，如果不知道这个设备的理想宽度是多少，那么用device-width这个特殊值就行了，同时initial-scale=1也有把viewport的宽度设为理想宽度的作用。</p>
+<p>为什么需要有理想的viewport呢？比如一个分辨率为320x480的手机理想layout viewport的宽度是320px，而另一个屏幕尺寸相同但分辨率为640x960的手机的理想layout viewport宽度也是为320px，那为什么分辨率大的这个手机的理想宽度要跟分辨率小的那个手机的理想宽度一样呢？</p>
+<p>这是因为，只有这样才能保证同样的网站在不同分辨率的设备上看起来都是一样或差不多的。实际上，现在市面上虽然有那么多不同种类不同品牌不同分辨率的手机，但它们的理想viewport宽度归纳起来无非也就 320、360、384、400等几种，都是非常接近的，理想宽度的相近也就意味着我们针对某个设备的理想viewport而做出的网站，在其他设备上的表现也不会相差非常多甚至是表现一样的。</p>
+<p>三、移动端适配方案<br>在移动端上，有了layout viewport的固定宽度之后，再进行移动端适配就不再是难事，简单总结了如下几种移动端适配的方法：</p>
+<p>1、flex弹性盒模型实现的移动端适配<br>以淘宝移动端页面为例：<a target="_blank" rel="noopener" href="https://main.m.taobao.com/index.html">https://main.m.taobao.com/index.html</a></p>
+<p>通过将盒子设置成flex布局以及width:100%，根据需要来设置justify-content以及align-items来对齐居中等，实现在不同屏幕尺寸的移动端下的适配。</p>
+<p>在需要适配的地方使用弹性盒模型以及百分比，在不需要适配的地方使用px，举个例子，底部tap就是适配的，而中间的导航，如”天猫新品，今日爆款“的图标块是原始px尺寸</p>
+<p>这种适配方案在手机端是OK的，但一旦转换到ipad端….，如下图所示，中间的导航栏由于div宽度过长，而其中的图标大小还是原始尺寸，导致盒子过大，图标无法填充满整个盒子，更别说是切换分页了（这个盒子中是有分页器的）</p>
+<p>这种适配方案的优缺点：</p>
+<p>优点：<br>实现简单便捷，flex+百分比/flex+vw灵活方便，无需引入其他库便可以实现大部分手机的屏幕适配<br>缺点：<br>针对于平板类的移动端，还需要另外做适配才能兼容，比较繁琐<br>2、rem+px2rem适配方案</p>
+<blockquote>
+<p>在W3C官网上是这样描述rem的——“font size of the root element” 。<br>基本思路：</p>
+</blockquote>
+<p>假如说我们的设计稿为750px，现在把设计稿分成10份，一份就为75px。</p>
+<p>同样，获取到移动端屏幕的宽度，将其分成十份，并且将每份的大小设置成1rem，也就是设置html的font-size。设置div大小时，便可用rem进行设置，比如，设计稿中一个Img是75 x 75，代码中就可以设置这个img为1rem，即img的宽度是设计稿的1/10，对应的比例在手机中也就是屏幕宽度的1/10，也就是1rem。分成几份全由自己来决定，可以分成10份，也可以分成20份，等等。</p>
+<p>这样可以实现适配，但是问题在于，每次写css的宽高时，都需要通过自己再进行计算转换成rem，比如如果有个img是50x50像素，它在设计稿中的比例是 50/75 = 0.667份，相当于在代码中我们需要写0.667rem，这其实是非常繁琐且低效的。</p>
+<p>但是，现有工具可以帮我们解决这个问题：postcss-px2rem。我们在写代码的时候还是可以用px，设计稿中写了多少px我们代码中就写多少px，在代码编译阶段，postcss-px2rem就会将px编译成相应的rem，这样我们就无需手动去换算，这是一种比较成熟的移动端适配方案。（这里不深入探究1px的问题，解决1px问题需要配合scale以及dpr进行）</p>
+<p>下面以vue项目且750px设计稿为例：</p>
+<p>我们设定设计稿html的fontSize = 75px，则1rem = 75px(分成10份)，体现在postCss-px2rem中就是remUnit: 75。这时在代码中写1px，代码编译后会转换成 1/75 = 0.01333rem，而这个0.01333rem是相对于移动端屏幕的，</p>
+<p>举个例子：如果移动端屏幕为375px，且我们对移动端网页的html设置了fontSize = 375 / 10 = 37.5px，则0.013333rem = 37.5 * 0.013333 = 0.5px，其比例和设计稿是一致的，所以显示在屏幕中也就是正常的。</p>
+<p>设置font-size的代码如下（引入的方式按需而定，比如这段代码可以通过一个script标签内联在app.html）：</p>
+<p>const width = document.documentElement.clientWidth;<br>const html = document.getElementByTagName(‘html’)[0];<br>html.style.fontSize = width / 10 + ‘px’;</p>
+<p>配置postCss-px2rem：</p>
+<p>// postcss.config.js<br>module.exports = {<br>plugins: {<br>autoprefixer: {},<br>‘postcss-px2rem’: {<br>remUnit: 75<br>}<br>}<br>};</p>
+<p>3、vw+px2rem适配方案<br>在移动端适配发展的初期，浏览器对vw的兼容性相比于rem是差很多的，但是随着浏览器的发展，慢慢地对vw的兼容相比于以前有了天翻地覆的变化</p>
+<p>回想rem适配，若是将设计稿分成100份的时候，其实1rem也就对应了1vw，两者的原理是差不多的，vw的好处就体现在其不再需要引入js，直接通过css代码便可以设置，</p>
+<p>代码如下：</p>
+<p>其中，还是将设计稿分成了十份，如果设计稿为1080px，则一份为108像素，注意，这两个值是通过自己去设置的，并不是一定要这样设置，可以根据设计稿以及自己方便计算来设置；</p>
+<p>设计稿的html fontSize设计成1/10的设计稿宽度108，所以postCss-px2rem中的remUnit就为108，相应的移动端页面中1rem = 10vw，相当于在375的屏幕中1rem = 37.5px。</p>
+<p>同时，也可以利用px2rem工具，写代码时就可以直接利用px。</p>
+<p>参考文章：</p>
+<p>viewport</p>
+<p><a target="_blank" rel="noopener" href="https://www.quirksmode.org/mobile/viewports.html">https://www.quirksmode.org/mobile/viewports.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.quirksmode.org/mobile/viewports2.html">https://www.quirksmode.org/mobile/viewports2.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.quirksmode.org/mobile/metaviewport/">https://www.quirksmode.org/mobile/metaviewport/</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/2050/p/3877280.html">https://www.cnblogs.com/2050/p/3877280.html</a></p>
+<p>移动端适配：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/amfe/article/issues/17">https://github.com/amfe/article/issues/17</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.im/entry/5a9d07ee6fb9a028c149f55b">https://juejin.im/entry/5a9d07ee6fb9a028c149f55b</a></p>
+
+      </div>
+    </div>
+  </div>
+</div>
+<div class="lx-navigation">
+	<div class="lx-cover prev lx-cover-sm" style="background-image: url(//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/images/footer-l.jpeg)">
+		<div class="overlay"></div>
+		<a class="copy" href="#">
+			<div class="display-t">
+				<div class="display-tc">
+					<div>
+						<span>Next</span>
+						<h3>No newer post</h3>
+					</div>
+				</div>
+			</div>
+		</a>
+	</div>
+        <div class="lx-cover next lx-cover-sm" style="background-image: url(//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/images/footer-r.jpeg)">
+		<div class="overlay"></div>
+		<a class="copy" href="/2021/05/07/okr-record/">
+			<div class="display-t">
+				<div class="display-tc">
+					<div>
+						<span>Prev</span>
+						<h3>OKR阅读心得</h3>
+					</div>
+				</div>
+			</div>
+		</a>
+	</div>
+</div>
+
+</div>
+
+<footer>
+  <div>
+  Copyright &copy; 2021.<a href="/">ROBIN-3910</a><br>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme <a href="https://lx.js.org" target="_blank">Lx</a><br>
+  </div>
+</footer>
+
+</div>
+
+<button class="hamburger hamburger--arrow-r" type="button">
+    <div class="hamburger-box">
+      <div class="hamburger-inner"></div>
+    </div>
+</button> 
+<div class="menu visibility">
+  <div class="menu-head">
+    <span class="layer">
+      <div class="col">
+        <div class="row for-pic">
+          <div class="profile-pic">
+            <a href="/"><img src="/images/avatar.jpeg" alt="rob-曾洛镔"/></a>
+          </div>
+        </div>
+        <div class="row for-name">
+          <p>rob-曾洛镔</p>
+          <span class="tagline">Hello, World!</span>
+        </div>
+      </div>
+    </span>
+  </div>
+  <nav class="menu-container">
+  <ul class="menu-items">
+    <li><a href="/"><i class="fa fa-home fa-fw"></i>Home</a></li>
+    <li><a href="/archives/"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+    
+    <li class="has-sub"><span class="dropdown-heading">
+      <i class="fa fa-bookmark fa-fw"></i>Pages</span>
+        <ul>
+          <li><a href="/guestbook/">Guestbook</a></li>
+        <li><a href="/about/">About</a></li>
+        </ul>
+    </li>
+    <li class="has-sub"><span class="dropdown-heading">
+      <i class="fa fa-link fa-fw"></i>Friends</span>
+        <ul>
+          <li> <a href="https://lx.js.org" target="_blank">Theme-Lx</a></li>
+        </ul>
+    </li>
+  </ul>
+  </nav>
+</div>
+
+<div class="gototop js-top">
+  <a href="#" class="js-gotop"><i class="fa fa-arrow-up"></i></a>
+</div>
+<script src="//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/js/jquery.easing.min.js"></script>
+<script>
+(function () {
+	"use strict";
+	var goToTop = function() {
+		$(".js-gotop").on("click", function(event){
+			event.preventDefault();
+			$("html, body").animate({
+				scrollTop: $("html").offset().top
+			}, 500, "easeInOutExpo");
+			return false;
+		});
+		$(window).scroll(function(){
+			var $win = $(window);
+			if ($win.scrollTop() > 200) {
+				$(".js-top").addClass("active");
+			} else {
+				$(".js-top").removeClass("active");
+			}
+		});
+	};
+	$(function(){
+		goToTop();
+	});
+}());
+</script>
+
+
+</body>
+</html>

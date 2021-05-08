@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ch">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme-color" content=#58b77a>
+  <title>ORM框架 | ROBIN-3910</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="rob_曾洛镔">
+  <meta name="keywords" content="">
+  <meta name="description" content="rob的个人博客网站，记录编码/学习/生活日常">
+  <script id="hexo-configurations">
+  var CONFIG = {
+    root: '/',
+    theme: 'lx',
+    version: '0.3.9',
+    localsearch: {
+      "enable": 'false',
+      "trigger": "auto",
+      "top_n_per_article": "1",
+      "unescape": 'false',
+      "preload": 'false'
+    },
+    path: '-'
+  };
+</script>
+
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/css/main.min.css">
+  <style type="text/css">
+    pre,
+    code {
+      font-family: 'Fira Code', monospace;
+    }
+    html {
+      font-family: sans-serif;
+    }
+    body {
+      font-family: sans-serif;
+    }
+    h1, h2, h3, h4, h5, figure {
+      font-family: sans-serif;
+    }
+    .menu-container{
+      font-family: sans-serif;
+    }
+  </style>
+
+  <script src="//cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/js/jquery.jside.menu.js"></script>
+	<script>
+	$(document).ready(function(){
+	$(".menu-container").jSideMenu({
+	    jSidePosition: "position-right",
+	    jSideSticky: true,
+	    jSideSkin: "greenish",
+	     });
+	}); 
+	</script>
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Fira Code:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+<div class="single">
+
+<div id="page">
+<div id="lx-aside" style="background-image: url(//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/images/post_cover.jpeg)" data-stellar-background-ratio="0.5">
+  <div class="overlay">
+  <div class="page-title">
+    <div class="avatar"><a href="/"><img style="width: 100px;height: 100px;" src="/images/avatar.jpeg"></a></div>
+    <span>2021-05-03</span>
+    <h2>ORM框架</h2>
+    <div class="tags"><i class="fa fa-tag"></i><a class="tag-none-link" href="/tags/ORM/" rel="tag">ORM</a></div>
+    <div class="social-links">
+    <a href="https://github.com/Robin3910" target="_blank"><i class="fa fa-github fa-fw"></i></a>
+    <a href="robin3910@163.com" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+</div></div>
+</div>
+</div>
+
+<div id="lx-main-content">
+  <div class="lx-post">
+    <div class="lx-entry padding">
+      <div>
+        <h2 id="一、ORM简介"><a href="#一、ORM简介" class="headerlink" title="一、ORM简介"></a>一、ORM简介</h2><p><code>ORM</code>（对象关系映射，<code>Object relational mapping</code>，简称<code>ORM</code>）是一种为了解决业务中对象与关系数据库不匹配的现象而提出的框架技术，<code>ORM</code><br>通过使用描述对象和数据库之间映射的元数据，将业务逻辑中的对象持久化到关系数据库中。</p>
+<pre><code>持久化：持久化是将程序数据在持久状态和瞬时状态间转换的机制，瞬时数据持久化为持久数据。通俗易懂地讲就是，业务中处理的对象数据发生改变，
+</code></pre>
+<p>需要将其同步到数据库中保存，即<code>持久化</code>。（比如内存中的数据，是不能永久保存的，持久化至数据库中，能够长久保存）</p>
+<p>实现持久化最基本的方式就是硬编码：为每一种增删改查的需求写相应的代码。可想而知，这种方式存在很多不足的地方：</p>
+<ul>
+<li><p>缺乏弹性，一旦业务需求发生变更，就必须修改代码，扩展性以及可维护性差；</p>
+</li>
+<li><p>针对于每一种持久化需求，都需要写相应的代码，但很大一部分代码都是重复的；</p>
+</li>
+</ul>
+<p>针对于以上问题，<code>ORM</code>框架就被提出来。<code>ORM</code>作为业务处理对象与数据库连接的桥梁，通过对象的语法，完成关系型数据库的操作技术。</p>
+<p><code>ORM</code> 把数据库映射成对象。</p>
+<ul>
+<li><p>数据库的表（<code>table</code>） –&gt; 类（<code>class</code>）</p>
+</li>
+<li><p>记录（<code>record</code>，行数据）–&gt; 对象（<code>object</code>）</p>
+</li>
+<li><p>字段（<code>field</code>）–&gt; 对象的属性（<code>attribute</code>）</p>
+</li>
+</ul>
+<p>举个例子：</p>
+<p>sql查询语句如下，</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> id, first_name, last_name, phone, birth_date, sex</span><br><span class="line"><span class="keyword">FROM</span> persons</span><br><span class="line"><span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<p>业务逻辑中操作数据库代码如下：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">res = db.execSql(sql);</span><br><span class="line">name = res[<span class="number">0</span>][<span class="string">&#x27;FIRST_NAME&#x27;</span>];</span><br></pre></td></tr></table></figure>
+
+<p>改用<code>ORM</code>框架之后：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> p = Person.get(<span class="number">10</span>);</span><br><span class="line"><span class="keyword">let</span> name = p.first_name;</span><br></pre></td></tr></table></figure>
+
+<p>通过以上代码对比，<code>ORM</code>的优点就凸显出来了：业务开发者不需要去碰SQL语句，只需要使用<code>ORM</code>提供的接口，直接对对象进行操作，就可以实现与数据库的交互，不需要关心数据库底层的增删改查SQL语句。</p>
+<h2 id="二、ORM优缺点"><a href="#二、ORM优缺点" class="headerlink" title="二、ORM优缺点"></a>二、ORM优缺点</h2><p><code>ORM</code>的优点：</p>
+<ul>
+<li><p>数据模型都在一个地方定义，更容易更新和维护，也利于重用代码。</p>
+</li>
+<li><p><code>ORM</code> 有现成的工具，很多功能都可以自动完成，比如数据消毒、预处理、事务等等。</p>
+</li>
+<li><p>它迫使你使用 MVC 架构，<code>ORM</code> 就是天然的 Model，最终使代码更清晰。</p>
+</li>
+<li><p>基于 <code>ORM</code> 的业务代码比较简单，代码量少，语义性好，容易理解。</p>
+</li>
+<li><p>不必编写性能不佳的 SQL。</p>
+</li>
+</ul>
+<p>但是<code>ORM</code>也有相应的缺点：</p>
+<ul>
+<li><p><code>ORM</code> 库不是轻量级工具，需要花很多精力学习和设置。</p>
+</li>
+<li><p>对于复杂的查询，<code>ORM</code> 要么是无法表达，要么是性能不如原生的 SQL。</p>
+</li>
+<li><p><code>ORM</code> 抽象掉了数据库层，开发者无法了解底层的数据库操作，也无法定制一些特殊的 SQL。</p>
+</li>
+</ul>
+<h2 id="三、ORM框架"><a href="#三、ORM框架" class="headerlink" title="三、ORM框架"></a>三、ORM框架</h2><p>实用<code>ORM</code>框架：<a target="_blank" rel="noopener" href="https://sequelize.org/v5/">sequelize</a></p>
+<p>连接数据库：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Sequelize = <span class="built_in">require</span>(<span class="string">&#x27;sequelize&#x27;</span>);</span><br><span class="line"><span class="comment">// option1:</span></span><br><span class="line">sequelize = <span class="keyword">new</span> Sequelize(<span class="string">&#x27;database&#x27;</span>, <span class="string">&#x27;username&#x27;</span>, <span class="string">&#x27;password&#x27;</span>, &#123;</span><br><span class="line">    <span class="attr">host</span>: <span class="string">&#x27;localhost&#x27;</span>,</span><br><span class="line">    <span class="attr">dialect</span>: <span class="string">&#x27;mysql&#x27;</span> | <span class="string">&#x27;mariadb&#x27;</span> | <span class="string">&#x27;postgres&#x27;</span> | <span class="string">&#x27;mssql&#x27;</span>,</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// or</span></span><br><span class="line"><span class="comment">// option2:</span></span><br><span class="line"><span class="keyword">const</span> sequelize = <span class="keyword">new</span> Sequelize(<span class="string">&#x27;mysql://root:asd123@localhost:3306/mydb&#x27;</span>);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>示例代码：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;Sequelize, Model, DataTypes, BuildOptions&#125; <span class="keyword">from</span> <span class="string">&#x27;sequelize&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123;</span><br><span class="line">    HasManyGetAssociationsMixin,</span><br><span class="line">    HasManyAddAssociationMixin,</span><br><span class="line">    HasManyHasAssociationMixin,</span><br><span class="line">    Association,</span><br><span class="line">    HasManyCountAssociationsMixin,</span><br><span class="line">    HasManyCreateAssociationMixin</span><br><span class="line">&#125; <span class="keyword">from</span> <span class="string">&#x27;sequelize&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 连接数据库</span></span><br><span class="line"><span class="keyword">const</span> sequelize = <span class="keyword">new</span> Sequelize(<span class="string">&#x27;mysql://root:asd123@localhost:3306/mydb&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置一个User表的操作对象</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span> <span class="keyword">extends</span> <span class="title">Model</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> id!: <span class="built_in">number</span>; <span class="comment">// &#x27;!&#x27;非空断言必须得有</span></span><br><span class="line">    <span class="keyword">public</span> name!: <span class="built_in">string</span>;</span><br><span class="line">    <span class="keyword">public</span> preferredName!: <span class="built_in">string</span> | <span class="literal">null</span>; <span class="comment">// for nullable fields</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// timestamps时间戳</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">readonly</span> createdAt!: <span class="built_in">Date</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">readonly</span> updatedAt!: <span class="built_in">Date</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 设置关联表</span></span><br><span class="line">    <span class="keyword">public</span> getProjects!: HasManyGetAssociationsMixin&lt;Project&gt;; <span class="comment">// Note the null assertions!</span></span><br><span class="line">    <span class="keyword">public</span> addProject!: HasManyAddAssociationMixin&lt;Project, <span class="built_in">number</span>&gt;;</span><br><span class="line">    <span class="keyword">public</span> hasProject!: HasManyHasAssociationMixin&lt;Project, <span class="built_in">number</span>&gt;;</span><br><span class="line">    <span class="keyword">public</span> countProjects!: HasManyCountAssociationsMixin;</span><br><span class="line">    <span class="keyword">public</span> createProject!: HasManyCreateAssociationMixin&lt;Project&gt;;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">readonly</span> projects?: Project[]; <span class="comment">// Note this is optional since it&#x27;s only populated when explicitly requested in code</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> associations: &#123;</span><br><span class="line">        <span class="attr">projects</span>: Association&lt;User, Project&gt;;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置Project表</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Project</span> <span class="keyword">extends</span> <span class="title">Model</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> id!: <span class="built_in">number</span>;</span><br><span class="line">    <span class="keyword">public</span> ownerId!: <span class="built_in">number</span>;</span><br><span class="line">    <span class="keyword">public</span> name!: <span class="built_in">string</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">readonly</span> createdAt!: <span class="built_in">Date</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">readonly</span> updatedAt!: <span class="built_in">Date</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置Address表</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Address</span> <span class="keyword">extends</span> <span class="title">Model</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> userId!: <span class="built_in">number</span>;</span><br><span class="line">    <span class="keyword">public</span> address!: <span class="built_in">string</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">readonly</span> createdAt!: <span class="built_in">Date</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">readonly</span> updatedAt!: <span class="built_in">Date</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 初始化Project表</span></span><br><span class="line">Project.init(&#123;</span><br><span class="line">    <span class="attr">id</span>: &#123;</span><br><span class="line">        <span class="attr">type</span>: DataTypes.INTEGER.UNSIGNED, <span class="comment">// you can omit the `new` but this is discouraged</span></span><br><span class="line">        <span class="attr">autoIncrement</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">primaryKey</span>: <span class="literal">true</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">ownerId</span>: &#123;</span><br><span class="line">        <span class="attr">type</span>: DataTypes.INTEGER.UNSIGNED,</span><br><span class="line">        <span class="attr">allowNull</span>: <span class="literal">false</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">name</span>: &#123;</span><br><span class="line">        <span class="attr">type</span>: <span class="keyword">new</span> DataTypes.STRING(<span class="number">128</span>),</span><br><span class="line">        <span class="attr">allowNull</span>: <span class="literal">false</span>,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;, &#123;</span><br><span class="line">    sequelize,</span><br><span class="line">    <span class="attr">tableName</span>: <span class="string">&#x27;projects&#x27;</span>,</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 初始化User表</span></span><br><span class="line">User.init(&#123;</span><br><span class="line">    <span class="attr">id</span>: &#123;</span><br><span class="line">        <span class="attr">type</span>: DataTypes.INTEGER.UNSIGNED,</span><br><span class="line">        <span class="attr">autoIncrement</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">primaryKey</span>: <span class="literal">true</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">name</span>: &#123;</span><br><span class="line">        <span class="attr">type</span>: <span class="keyword">new</span> DataTypes.STRING(<span class="number">128</span>),</span><br><span class="line">        <span class="attr">allowNull</span>: <span class="literal">false</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">preferredName</span>: &#123;</span><br><span class="line">        <span class="attr">type</span>: <span class="keyword">new</span> DataTypes.STRING(<span class="number">128</span>),</span><br><span class="line">        <span class="attr">allowNull</span>: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;, &#123;</span><br><span class="line">    <span class="attr">tableName</span>: <span class="string">&#x27;users&#x27;</span>,</span><br><span class="line">    <span class="attr">sequelize</span>: sequelize,</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 初始化Address表</span></span><br><span class="line">Address.init(&#123;</span><br><span class="line">    <span class="attr">userId</span>: &#123;</span><br><span class="line">        <span class="attr">type</span>: DataTypes.INTEGER.UNSIGNED,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">address</span>: &#123;</span><br><span class="line">        <span class="attr">type</span>: <span class="keyword">new</span> DataTypes.STRING(<span class="number">128</span>),</span><br><span class="line">        <span class="attr">allowNull</span>: <span class="literal">false</span>,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;, &#123;</span><br><span class="line">    <span class="attr">tableName</span>: <span class="string">&#x27;address&#x27;</span>,</span><br><span class="line">    <span class="attr">sequelize</span>: sequelize, <span class="comment">// this bit is important</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 为Project表设置一个外键ownerId绑定约束到User表中</span></span><br><span class="line">User.hasMany(Project, &#123;</span><br><span class="line">    <span class="attr">sourceKey</span>: <span class="string">&#x27;id&#x27;</span>,</span><br><span class="line">    <span class="attr">foreignKey</span>: <span class="string">&#x27;ownerId&#x27;</span>,</span><br><span class="line">    <span class="attr">as</span>: <span class="string">&#x27;projects&#x27;</span> <span class="comment">// this determines the name in `associations`!</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置Address表的外键约束绑定到User表的id</span></span><br><span class="line">Address.belongsTo(User, &#123;<span class="attr">targetKey</span>: <span class="string">&#x27;id&#x27;</span>&#125;);</span><br><span class="line">User.hasOne(Address, &#123;<span class="attr">sourceKey</span>: <span class="string">&#x27;id&#x27;</span>&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 测试</span></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">stuff</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> newUser = <span class="keyword">await</span> User.create(&#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;Johnny&#x27;</span>,</span><br><span class="line">        <span class="attr">preferredName</span>: <span class="string">&#x27;John&#x27;</span>,</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="built_in">console</span>.log(newUser.id, newUser.name, newUser.preferredName);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这个first Project记录生成时会与User的id绑定，ownerId对应User表里的id记录，而Project的id作为索引自增</span></span><br><span class="line">    <span class="keyword">const</span> project = <span class="keyword">await</span> newUser.createProject(&#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;first!&#x27;</span>,</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// findByPk()，其中Pk为primary_key，即user表的索引ID，并且列出与该user有关的projects</span></span><br><span class="line">    <span class="keyword">const</span> ourUser = <span class="keyword">await</span> User.findByPk(<span class="number">1</span>, &#123;</span><br><span class="line">        <span class="attr">include</span>: [User.associations.projects],</span><br><span class="line">        <span class="attr">rejectOnEmpty</span>: <span class="literal">true</span>, <span class="comment">// Specifying true here removes `null` from the return type!</span></span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="built_in">console</span>.log(ourUser.projects![<span class="number">0</span>].name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </div>
+    </div>
+  </div>
+</div>
+<div class="lx-navigation">
+	<div class="lx-cover prev lx-cover-sm" style="background-image: url(//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/images/footer-l.jpeg)">
+		<div class="overlay"></div>
+		<a class="copy" href="/2021/05/05/okr-record/">
+			<div class="display-t">
+				<div class="display-tc">
+					<div>
+						<span>Next</span>
+						<h3>OKR阅读心得</h3>
+					</div>
+				</div>
+			</div>
+		</a>
+	</div>
+        <div class="lx-cover next lx-cover-sm" style="background-image: url(//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/images/footer-r.jpeg)">
+		<div class="overlay"></div>
+		<a class="copy" href="/2021/05/01/ts-notes/">
+			<div class="display-t">
+				<div class="display-tc">
+					<div>
+						<span>Prev</span>
+						<h3>ts随笔</h3>
+					</div>
+				</div>
+			</div>
+		</a>
+	</div>
+</div>
+
+</div>
+
+<footer>
+  <div>
+  Copyright &copy; 2021.<a href="/">ROBIN-3910</a><br>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme <a href="https://lx.js.org" target="_blank">Lx</a><br>
+  </div>
+</footer>
+
+</div>
+
+<button class="hamburger hamburger--arrow-r" type="button">
+    <div class="hamburger-box">
+      <div class="hamburger-inner"></div>
+    </div>
+</button> 
+<div class="menu visibility">
+  <div class="menu-head">
+    <span class="layer">
+      <div class="col">
+        <div class="row for-pic">
+          <div class="profile-pic">
+            <a href="/"><img src="/images/avatar.jpeg" alt="rob_曾洛镔"/></a>
+          </div>
+        </div>
+        <div class="row for-name">
+          <p>rob_曾洛镔</p>
+          <span class="tagline">祝你暴富🤩</span>
+        </div>
+      </div>
+    </span>
+  </div>
+  <nav class="menu-container">
+  <ul class="menu-items">
+    <li><a href="/"><i class="fa fa-home fa-fw"></i>Home</a></li>
+    <li><a href="/archives/"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+    
+    
+    
+  </ul>
+  </nav>
+</div>
+
+<div class="gototop js-top">
+  <a href="#" class="js-gotop"><i class="fa fa-arrow-up"></i></a>
+</div>
+<script src="//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/js/jquery.easing.min.js"></script>
+<script>
+(function () {
+	"use strict";
+	var goToTop = function() {
+		$(".js-gotop").on("click", function(event){
+			event.preventDefault();
+			$("html, body").animate({
+				scrollTop: $("html").offset().top
+			}, 500, "easeInOutExpo");
+			return false;
+		});
+		$(window).scroll(function(){
+			var $win = $(window);
+			if ($win.scrollTop() > 200) {
+				$(".js-top").addClass("active");
+			} else {
+				$(".js-top").removeClass("active");
+			}
+		});
+	};
+	$(function(){
+		goToTop();
+	});
+}());
+</script>
+
+
+</body>
+</html>

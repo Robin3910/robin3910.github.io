@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ch">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme-color" content=#58b77a>
+  <title>二叉搜索树TS实现 | ROBIN-3910</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="rob_曾洛镔">
+  <meta name="keywords" content="">
+  <meta name="description" content="rob的个人博客网站，记录编码/学习/生活日常">
+  <script id="hexo-configurations">
+  var CONFIG = {
+    root: '/',
+    theme: 'lx',
+    version: '0.3.9',
+    localsearch: {
+      "enable": 'false',
+      "trigger": "auto",
+      "top_n_per_article": "1",
+      "unescape": 'false',
+      "preload": 'false'
+    },
+    path: '-'
+  };
+</script>
+
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/css/main.min.css">
+  <style type="text/css">
+    pre,
+    code {
+      font-family: 'Fira Code', monospace;
+    }
+    html {
+      font-family: sans-serif;
+    }
+    body {
+      font-family: sans-serif;
+    }
+    h1, h2, h3, h4, h5, figure {
+      font-family: sans-serif;
+    }
+    .menu-container{
+      font-family: sans-serif;
+    }
+  </style>
+
+  <script src="//cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/js/jquery.jside.menu.js"></script>
+	<script>
+	$(document).ready(function(){
+	$(".menu-container").jSideMenu({
+	    jSidePosition: "position-right",
+	    jSideSticky: true,
+	    jSideSkin: "greenish",
+	     });
+	}); 
+	</script>
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Fira Code:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+<div class="single">
+
+<div id="page">
+<div id="lx-aside" style="background-image: url(//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/images/post_cover.jpeg)" data-stellar-background-ratio="0.5">
+  <div class="overlay">
+  <div class="page-title">
+    <div class="avatar"><a href="/"><img style="width: 100px;height: 100px;" src="/images/avatar.jpeg"></a></div>
+    <span>2021-05-09</span>
+    <h2>二叉搜索树TS实现</h2>
+    <div class="tags"><i class="fa fa-tag"></i><a class="tag-none-link" href="/tags/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E3%80%81TS%E5%AE%9E%E7%8E%B0%E3%80%81BST/" rel="tag">二叉搜索树、TS实现、BST</a></div>
+    <div class="social-links">
+    <a href="https://github.com/Robin3910" target="_blank"><i class="fa fa-github fa-fw"></i></a>
+    <a href="robin3910@163.com" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+</div></div>
+</div>
+</div>
+
+<div id="lx-main-content">
+  <div class="lx-post">
+    <div class="lx-entry padding">
+      <div>
+        <p>数组的搜索比较方便，可以直接使用下标，但删除或者插入就比较麻烦了，而链表与之相反，删除和插入都比较简单， 但是查找很慢，这自然也与这两种数据结构的存储方式有关，数组是取一段相连的空间，而链表是每创建一个节点便取一个节点所需的空间，<br>只是使用指针进行连接，空间上并不是连续的。而二叉树就既有链表的好处，又有数组的优点。 </p>
+<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><p>二叉搜索树作为一种经典的数据结构，它既有链表的快速插入与删除操作的特点，又有数组快速查找的优势；所以应用十分广泛，例如在文件系统和数据库系统一般会采用这种数据结构进行高效率的排序与检索操作。</p>
+<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><p>在二叉搜索树中：</p>
+<ul>
+<li>若任意结点的左子树不空，则左子树上所有结点的值均不大于它的根结点的值。 </li>
+<li>若任意结点的右子树不空，则右子树上所有结点的值均不小于它的根结点的值。 </li>
+<li>任意结点的左、右子树也分别为二叉搜索树。</li>
+</ul>
+<h2 id="TS实现"><a href="#TS实现" class="headerlink" title="TS实现"></a>TS实现</h2><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/***</span></span><br><span class="line"><span class="comment"> * 二叉搜索树接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">interface</span> BinarySearchTreeImpl &#123;</span><br><span class="line">    <span class="attr">insert</span>: <span class="function">(<span class="params">value: <span class="built_in">number</span></span>) =&gt;</span> <span class="built_in">void</span>;</span><br><span class="line">    remove: <span class="function">(<span class="params">target: <span class="built_in">number</span></span>) =&gt;</span> <span class="built_in">void</span>;</span><br><span class="line">    search: <span class="function">(<span class="params">target: <span class="built_in">number</span></span>) =&gt;</span> TreeNode | <span class="literal">null</span>;</span><br><span class="line">    getRoot: <span class="function">() =&gt;</span> TreeNode;</span><br><span class="line">    getMin: <span class="function">() =&gt;</span> TreeNode;</span><br><span class="line">    getMax: <span class="function">() =&gt;</span> TreeNode;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/***</span></span><br><span class="line"><span class="comment"> * 树节点</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TreeNode</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> value: <span class="built_in">number</span>;</span><br><span class="line">    <span class="keyword">public</span> left: TreeNode | <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">public</span> right: TreeNode | <span class="literal">null</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="title">constructor</span>(<span class="params">value</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.value = value;</span><br><span class="line">        <span class="built_in">this</span>.left = <span class="literal">null</span>;</span><br><span class="line">        <span class="built_in">this</span>.right = <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/***</span></span><br><span class="line"><span class="comment"> * 二叉搜索树</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BinarySearchTree</span> <span class="title">implements</span> <span class="title">BinarySearchTreeImpl</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> root: TreeNode | <span class="literal">null</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="title">constructor</span>(<span class="params">val</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">this</span>.root) &#123;</span><br><span class="line">            <span class="built_in">this</span>.root = <span class="keyword">new</span> TreeNode(val);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 前序遍历</span></span><br><span class="line"><span class="comment">     * */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> PRE_ORDER_TRAVERSE(node: TreeNode): <span class="built_in">void</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (!node) <span class="keyword">return</span>;</span><br><span class="line">        <span class="built_in">console</span>.log(node.value);</span><br><span class="line">        <span class="built_in">this</span>.PRE_ORDER_TRAVERSE(node.left);</span><br><span class="line">        <span class="built_in">this</span>.PRE_ORDER_TRAVERSE(node.right);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 中序遍历</span></span><br><span class="line"><span class="comment">     * */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> IN_ORDER_TRAVERSE(node: TreeNode): <span class="built_in">void</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (!node) <span class="keyword">return</span>;</span><br><span class="line">        <span class="built_in">this</span>.IN_ORDER_TRAVERSE(node.left);</span><br><span class="line">        <span class="built_in">console</span>.log(node.value);</span><br><span class="line">        <span class="built_in">this</span>.IN_ORDER_TRAVERSE(node.right);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 后序遍历</span></span><br><span class="line"><span class="comment">     * */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> POST_ORDER_TRAVERSE(node: TreeNode): <span class="built_in">void</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (!node) <span class="keyword">return</span>;</span><br><span class="line">        <span class="built_in">this</span>.POST_ORDER_TRAVERSE(node.left);</span><br><span class="line">        <span class="built_in">this</span>.POST_ORDER_TRAVERSE(node.right);</span><br><span class="line">        <span class="built_in">console</span>.log(node.value);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取根节点</span></span><br><span class="line"><span class="comment">     * */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="title">getRoot</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>.root;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 插入节点</span></span><br><span class="line"><span class="comment">     * */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="title">insert</span>(<span class="params">value: <span class="built_in">number</span></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> node = <span class="keyword">new</span> TreeNode(value);</span><br><span class="line">        <span class="keyword">let</span> curNode = <span class="built_in">this</span>.root;</span><br><span class="line">        <span class="keyword">let</span> preNode;</span><br><span class="line">        <span class="comment">// 先找到插入的位置</span></span><br><span class="line">        <span class="keyword">while</span> (curNode) &#123;</span><br><span class="line">            <span class="keyword">if</span> (curNode.value === node.value) &#123;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (curNode.value &gt; node.value) &#123;</span><br><span class="line">                preNode = curNode;</span><br><span class="line">                curNode = curNode.left;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (curNode.value &lt; node.value) &#123;</span><br><span class="line">                preNode = curNode;</span><br><span class="line">                curNode = curNode.right;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 插入节点</span></span><br><span class="line">        <span class="keyword">if</span> (preNode.value &gt; node.value) &#123;</span><br><span class="line">            preNode.left = node;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (preNode.value &lt; node.value) &#123;</span><br><span class="line">            preNode.right = node;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 删除节点</span></span><br><span class="line"><span class="comment">     * */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="title">remove</span>(<span class="params">target: <span class="built_in">number</span></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">this</span>.root) <span class="keyword">return</span>;</span><br><span class="line">        <span class="comment">// 当前遍历的节点</span></span><br><span class="line">        <span class="keyword">let</span> curNode = <span class="built_in">this</span>.root;</span><br><span class="line">        <span class="comment">// 要删除的目标节点是其父节点的左子节点还是右子节点</span></span><br><span class="line">        <span class="keyword">let</span> isLeft = <span class="literal">true</span>;</span><br><span class="line">        <span class="comment">// 要删除的目标节点</span></span><br><span class="line">        <span class="keyword">let</span> targetNode;</span><br><span class="line">        <span class="comment">// 要删除的目标节点的父节点</span></span><br><span class="line">        <span class="keyword">let</span> preNode = curNode;</span><br><span class="line">        <span class="comment">// 找到对应的节点</span></span><br><span class="line">        <span class="keyword">while</span> (curNode) &#123;</span><br><span class="line">            <span class="keyword">if</span> (curNode.value === target) &#123;</span><br><span class="line">                targetNode = curNode;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (curNode.value &gt; target) &#123;</span><br><span class="line">                preNode = curNode;</span><br><span class="line">                isLeft = <span class="literal">true</span>;</span><br><span class="line">                curNode = curNode.left;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (curNode.value &lt; target) &#123;</span><br><span class="line">                preNode = curNode;</span><br><span class="line">                isLeft = <span class="literal">false</span>;</span><br><span class="line">                curNode = curNode.right;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 目标节点是叶子节点，无左右子节点，直接删除</span></span><br><span class="line">        <span class="keyword">if</span> (!curNode.left &amp;&amp; !curNode.right) &#123;</span><br><span class="line">            <span class="keyword">if</span> (isLeft) &#123;</span><br><span class="line">                preNode.left = <span class="literal">null</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                preNode.right = <span class="literal">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 目标节点有左节点，无右节点</span></span><br><span class="line">        <span class="keyword">if</span> (curNode.left &amp;&amp; !curNode.right) &#123;</span><br><span class="line">            <span class="keyword">if</span> (isLeft) &#123;</span><br><span class="line">                preNode.left.value = curNode.left.value;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                preNode.right.value = curNode.left.value;</span><br><span class="line">            &#125;</span><br><span class="line">            curNode.left = <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 目标节点有右节点，无左节点</span></span><br><span class="line">        <span class="keyword">if</span> (!curNode.left &amp;&amp; curNode.right) &#123;</span><br><span class="line">            <span class="keyword">if</span> (isLeft) &#123;</span><br><span class="line">                preNode.left.value = curNode.right.value;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                preNode.right.value = curNode.right.value;</span><br><span class="line">            &#125;</span><br><span class="line">            curNode.right = <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 目标节点处于中间位置，存在左子节点也存在右子节点</span></span><br><span class="line"><span class="comment">         * 可以有以下两种处理方式：</span></span><br><span class="line"><span class="comment">         * 1、找到当前要删除节点左子树中最大的节点与要删除的节点进行替换</span></span><br><span class="line"><span class="comment">         * 2、找到当前要删除节点右子树中最小的节点与要删除的节点进行替换</span></span><br><span class="line"><span class="comment">         *</span></span><br><span class="line"><span class="comment">         * 以第一种方式为例，用即将删除节点的左子树中最大的节点与将要删除的节点替换，存在以下两种情况：</span></span><br><span class="line"><span class="comment">         * a.当前左子树根节点无右子树或者右节点：直接将左子树的根节点替换到删除的节点，并且将删除节点的右子树挂到当前左子树的根节点上</span></span><br><span class="line"><span class="comment">         * b.当前左子树根节点存在右子树或者右节点：找到左子树中的最大节点，用该最大节点去替换删除节点，并将删除节点的右子树挂到该最大节点上</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">if</span> (curNode.left &amp;&amp; curNode.right) &#123;</span><br><span class="line">            <span class="keyword">let</span> tempCurNode = curNode.left;</span><br><span class="line">            <span class="keyword">let</span> tempPreNode = curNode;</span><br><span class="line">            <span class="comment">// 找到左子树中当前的最大值</span></span><br><span class="line">            <span class="keyword">while</span> (tempCurNode.right) &#123;</span><br><span class="line">                tempPreNode = tempCurNode;</span><br><span class="line">                tempCurNode = tempCurNode.right;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (tempPreNode === curNode) &#123;</span><br><span class="line">                <span class="comment">// 当前左子树根节点无右子树或者右节点：直接将左子树的根节点替换到删除的节点，并且将删除节点的右子树挂到当前左子树的根节点上</span></span><br><span class="line">                tempCurNode.right = curNode.right;</span><br><span class="line">                <span class="keyword">if</span> (isLeft) &#123;</span><br><span class="line">                    preNode.left = tempCurNode;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    preNode.right = tempCurNode;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 当前左子树根节点存在右子树或者右节点：找到左子树中的最大节点，用该最大节点去替换删除节点，并将删除节点的右子树挂到该最大节点上</span></span><br><span class="line">                curNode.value = tempCurNode.value;</span><br><span class="line">                tempPreNode.right = <span class="literal">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 搜索目标节点</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> search(target: <span class="built_in">number</span>): TreeNode | <span class="literal">null</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> node = <span class="built_in">this</span>.root;</span><br><span class="line">        <span class="keyword">while</span> (node) &#123;</span><br><span class="line">            <span class="keyword">if</span> (node.value === target) &#123;</span><br><span class="line">                <span class="keyword">return</span> node;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (node.value &gt; target) &#123;</span><br><span class="line">                node = node.left;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (node.value &lt; target) &#123;</span><br><span class="line">                node = node.right;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取最小节点</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> getMin(): TreeNode &#123;</span><br><span class="line">        <span class="keyword">let</span> node = <span class="built_in">this</span>.root;</span><br><span class="line">        <span class="keyword">while</span> (node.left) &#123;</span><br><span class="line">            node = node.left;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> node;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取最大节点</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> getMax(): TreeNode &#123;</span><br><span class="line">        <span class="keyword">let</span> node = <span class="built_in">this</span>.root;</span><br><span class="line">        <span class="keyword">while</span> (node.right) &#123;</span><br><span class="line">            node = node.right;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> node;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * test</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">const</span> bst = <span class="keyword">new</span> BinarySearchTree(<span class="number">10</span>);</span><br><span class="line">bst.insert(<span class="number">5</span>);</span><br><span class="line">bst.insert(<span class="number">15</span>);</span><br><span class="line">bst.insert(<span class="number">3</span>);</span><br><span class="line">bst.insert(<span class="number">8</span>);</span><br><span class="line">bst.insert(<span class="number">1</span>);</span><br><span class="line">bst.insert(<span class="number">4</span>);</span><br><span class="line">bst.insert(<span class="number">6</span>);</span><br><span class="line">bst.insert(<span class="number">9</span>);</span><br><span class="line">bst.insert(<span class="number">13</span>);</span><br><span class="line">bst.insert(<span class="number">20</span>);</span><br><span class="line">bst.insert(<span class="number">11</span>);</span><br><span class="line">bst.insert(<span class="number">25</span>);</span><br><span class="line"></span><br><span class="line">bst.remove(<span class="number">8</span>);</span><br><span class="line"></span><br><span class="line">BinarySearchTree.IN_ORDER_TRAVERSE(bst.getRoot());</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+      </div>
+    </div>
+  </div>
+</div>
+<div class="lx-navigation">
+	<div class="lx-cover prev lx-cover-sm" style="background-image: url(//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/images/footer-l.jpeg)">
+		<div class="overlay"></div>
+		<a class="copy" href="/2021/05/10/avlTree/">
+			<div class="display-t">
+				<div class="display-tc">
+					<div>
+						<span>Next</span>
+						<h3>AVL树TS实现</h3>
+					</div>
+				</div>
+			</div>
+		</a>
+	</div>
+        <div class="lx-cover next lx-cover-sm" style="background-image: url(//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/images/footer-r.jpeg)">
+		<div class="overlay"></div>
+		<a class="copy" href="/2021/05/08/viewport/">
+			<div class="display-t">
+				<div class="display-tc">
+					<div>
+						<span>Prev</span>
+						<h3>移动端适配总结</h3>
+					</div>
+				</div>
+			</div>
+		</a>
+	</div>
+</div>
+
+</div>
+
+<footer>
+  <div>
+  Copyright &copy; 2021.<a href="/">ROBIN-3910</a><br>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme <a href="https://lx.js.org" target="_blank">Lx</a><br>
+  </div>
+</footer>
+
+</div>
+
+<button class="hamburger hamburger--arrow-r" type="button">
+    <div class="hamburger-box">
+      <div class="hamburger-inner"></div>
+    </div>
+</button> 
+<div class="menu visibility">
+  <div class="menu-head">
+    <span class="layer">
+      <div class="col">
+        <div class="row for-pic">
+          <div class="profile-pic">
+            <a href="/"><img src="/images/avatar.jpeg" alt="rob_曾洛镔"/></a>
+          </div>
+        </div>
+        <div class="row for-name">
+          <p>rob_曾洛镔</p>
+          <span class="tagline">祝你暴富🤩</span>
+        </div>
+      </div>
+    </span>
+  </div>
+  <nav class="menu-container">
+  <ul class="menu-items">
+    <li><a href="/"><i class="fa fa-home fa-fw"></i>Home</a></li>
+    <li><a href="/archives/"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+    
+    
+    
+  </ul>
+  </nav>
+</div>
+
+<div class="gototop js-top">
+  <a href="#" class="js-gotop"><i class="fa fa-arrow-up"></i></a>
+</div>
+<script src="//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/js/jquery.easing.min.js"></script>
+<script>
+(function () {
+	"use strict";
+	var goToTop = function() {
+		$(".js-gotop").on("click", function(event){
+			event.preventDefault();
+			$("html, body").animate({
+				scrollTop: $("html").offset().top
+			}, 500, "easeInOutExpo");
+			return false;
+		});
+		$(window).scroll(function(){
+			var $win = $(window);
+			if ($win.scrollTop() > 200) {
+				$(".js-top").addClass("active");
+			} else {
+				$(".js-top").removeClass("active");
+			}
+		});
+	};
+	$(function(){
+		goToTop();
+	});
+}());
+</script>
+
+
+</body>
+</html>

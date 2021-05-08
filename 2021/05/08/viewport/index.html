@@ -6,7 +6,7 @@
   <meta name="theme-color" content=#58b77a>
   <title>移动端适配总结 | ROBIN-3910</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="author" content="rob-曾洛镔">
+  <meta name="author" content="rob_曾洛镔">
   <meta name="keywords" content="">
   <meta name="description" content="rob的个人博客网站，记录编码/学习/生活日常">
   <script id="hexo-configurations">
@@ -69,9 +69,9 @@
   <div class="overlay">
   <div class="page-title">
     <div class="avatar"><a href="/"><img style="width: 100px;height: 100px;" src="/images/avatar.jpeg"></a></div>
-    <span>2021-05-07</span>
+    <span>2021-05-08</span>
     <h2>移动端适配总结</h2>
-    
+    <div class="tags"><i class="fa fa-tag"></i><a class="tag-none-link" href="/tags/viewport%E3%80%81%E7%A7%BB%E5%8A%A8%E7%AB%AF%E9%80%82%E9%85%8D/" rel="tag">viewport、移动端适配</a></div>
     <div class="social-links">
     <a href="https://github.com/Robin3910" target="_blank"><i class="fa fa-github fa-fw"></i></a>
     <a href="robin3910@163.com" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
@@ -150,9 +150,8 @@
 
 <p><strong>这种适配方案的优缺点：</strong></p>
 <p><strong>优点：</strong><br>实现简单便捷，<code>flex+百分比/flex+vw</code>灵活方便，无需引入其他库便可以实现大部分手机的屏幕适配<br><strong>缺点：</strong><br>针对于平板类的移动端，还需要另外做适配才能兼容，比较繁琐</p>
-<h3 id="3-2、rem-px2rem适配方案"><a href="#3-2、rem-px2rem适配方案" class="headerlink" title="3.2、rem+px2rem适配方案"></a>3.2、rem+px2rem适配方案</h3><blockquote>
-<p>在W3C官网上是这样描述rem的——“font size of the root element” 。</p>
-</blockquote>
+<h3 id="3-2、rem-px2rem适配方案"><a href="#3-2、rem-px2rem适配方案" class="headerlink" title="3.2、rem+px2rem适配方案"></a>3.2、rem+px2rem适配方案</h3><pre><code>在W3C官网上是这样描述rem的——“font size of the root element” 。
+</code></pre>
 <p>基本思路：</p>
 <p>假如说我们的设计稿为<code>750px</code>，现在把设计稿分成<code>10</code>份，一份就为<code>75px</code>。</p>
 <p>同样，获取到移动端屏幕的宽度，将其分成十份，并且将每份的大小设置成<code>1rem</code>，也就是设置<code>html</code>的<code>font-size</code>。设置<code>div</code>大小时，便可用<code>rem</code>进行设置，比如，设计稿中一个<code>Img</code>是<code>75 x 75</code>，代码中就可以设置这个<code>img</code>为<code>1rem</code>，即<code>img</code>的宽度是设计稿的<code>1/10</code>，对应的比例在手机中也就是屏幕宽度的<code>1/10</code>，也就是<code>1rem</code>。分成几份全由自己来决定，可以分成<code>10</code>份，也可以分成<code>20</code>份，等等。</p>
@@ -195,12 +194,12 @@
 <div class="lx-navigation">
 	<div class="lx-cover prev lx-cover-sm" style="background-image: url(//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/images/footer-l.jpeg)">
 		<div class="overlay"></div>
-		<a class="copy" href="#">
+		<a class="copy" href="/2021/05/09/bst/">
 			<div class="display-t">
 				<div class="display-tc">
 					<div>
 						<span>Next</span>
-						<h3>No newer post</h3>
+						<h3>二叉搜索树TS实现</h3>
 					</div>
 				</div>
 			</div>
@@ -208,12 +207,12 @@
 	</div>
         <div class="lx-cover next lx-cover-sm" style="background-image: url(//cdn.jsdelivr.net/npm/theme-lx@0.3.9/source/images/footer-r.jpeg)">
 		<div class="overlay"></div>
-		<a class="copy" href="/2021/05/07/okr-record/">
+		<a class="copy" href="/2021/05/07/h5-bg-animation/">
 			<div class="display-t">
 				<div class="display-tc">
 					<div>
 						<span>Prev</span>
-						<h3>OKR阅读心得</h3>
+						<h3>H5背景动效实...</h3>
 					</div>
 				</div>
 			</div>
@@ -242,12 +241,12 @@
       <div class="col">
         <div class="row for-pic">
           <div class="profile-pic">
-            <a href="/"><img src="/images/avatar.jpeg" alt="rob-曾洛镔"/></a>
+            <a href="/"><img src="/images/avatar.jpeg" alt="rob_曾洛镔"/></a>
           </div>
         </div>
         <div class="row for-name">
-          <p>rob-曾洛镔</p>
-          <span class="tagline">Hello, World!</span>
+          <p>rob_曾洛镔</p>
+          <span class="tagline">祝你暴富🤩</span>
         </div>
       </div>
     </span>
@@ -257,19 +256,8 @@
     <li><a href="/"><i class="fa fa-home fa-fw"></i>Home</a></li>
     <li><a href="/archives/"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
     
-    <li class="has-sub"><span class="dropdown-heading">
-      <i class="fa fa-bookmark fa-fw"></i>Pages</span>
-        <ul>
-          <li><a href="/guestbook/">Guestbook</a></li>
-        <li><a href="/about/">About</a></li>
-        </ul>
-    </li>
-    <li class="has-sub"><span class="dropdown-heading">
-      <i class="fa fa-link fa-fw"></i>Friends</span>
-        <ul>
-          <li> <a href="https://lx.js.org" target="_blank">Theme-Lx</a></li>
-        </ul>
-    </li>
+    
+    
   </ul>
   </nav>
 </div>

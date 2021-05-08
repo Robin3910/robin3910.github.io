@@ -85,10 +85,10 @@
       <div>
         <pre><code>该笔记主要记录了一些编码过程中比较常见但是又容易模糊的知识点
 </code></pre>
-<p><strong>原始类型</strong>：string, boolean, number, null, void, symbol, undefined, bigint</p>
-<p>Tip: 编码过程中也有类似的关键字Boolean, Number, String等，这是JS的构造函数，和类型完全不同。</p>
+<p><strong>原始类型</strong>：<code>string</code>, <code>boolean</code>, <code>number</code>, <code>null</code>, <code>void</code>, <code>symbol</code>, <code>undefined</code>, <code>bigint</code></p>
+<p>Tip: 编码过程中也有类似的关键字<code>Boolean</code>, <code>Number</code>, <code>String</code>等，这是JS的构造函数，和类型完全不同。</p>
 <p><strong>Bigint</strong></p>
-<p>使用Bigint可以安全地存储和操作大整数，即这个数已经超过了JS构造函数Number能够表示的安全整数范围，使用Bigint需要使用ESnext编译辅助库。</p>
+<p>使用Bigint可以安全地存储和操作大整数，即这个数已经超过了JS构造函数<code>Number</code>能够表示的安全整数范围，使用<code>Bigint</code>需要使用<code>ESnext</code>编译辅助库。</p>
 <p>下面两段代码就可以看出区别：</p>
 <figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> max = <span class="built_in">Number</span>.MAX_SAFE_INTEGER; <span class="comment">// 2^53-1</span></span><br><span class="line"><span class="keyword">const</span> max1 = max + <span class="number">1</span>;</span><br><span class="line"><span class="keyword">const</span> max2 = max + <span class="number">2</span>;</span><br><span class="line"><span class="built_in">console</span>.log(max1 === max2); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
 
@@ -99,7 +99,7 @@
 
 
 <p><strong>unknown和any</strong></p>
-<p>unknown是更安全的any类型，any类型在赋值之前，可以通过.去获取属性和方法不会抛错，但是unknown会。</p>
+<p><code>unknown</code>是更安全的<code>any</code>类型，<code>any</code>类型在赋值之前，可以通过.去获取属性和方法不会抛错，但是<code>unknown</code>会。</p>
 <figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> value: <span class="built_in">any</span>;</span><br><span class="line">value.foo.bar; <span class="comment">// ok</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> zoo: unknown;</span><br><span class="line">zoo.foo; <span class="comment">// error</span></span><br></pre></td></tr></table></figure>
 
 
@@ -112,7 +112,7 @@
 
 <p><strong>元组</strong></p>
 <p>元组与数组非常相似，元组可以说是类型更加严格的数组。</p>
-<p>元组定义完后可以通过push添加元素，但是获取时会报错</p>
+<p>元组定义完后可以通过<code>push</code>添加元素，但是获取时会报错</p>
 <figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> x: [<span class="built_in">string</span>, <span class="built_in">number</span>];</span><br><span class="line">x = [<span class="string">&quot;robin&quot;</span>, <span class="number">10</span>]; <span class="comment">// ok</span></span><br><span class="line">x = [<span class="number">10</span>]; <span class="comment">// error</span></span><br><span class="line"></span><br><span class="line">x.push(<span class="number">2</span>);</span><br><span class="line">x[<span class="number">2</span>]; <span class="comment">// error</span></span><br></pre></td></tr></table></figure>
 
 
@@ -124,7 +124,7 @@
 <p><strong>枚举的本质</strong></p>
 <figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">enum</span> Direction&#123;</span><br><span class="line">		up,</span><br><span class="line">		left,</span><br><span class="line">		down,</span><br><span class="line">		right</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(Direction.up) <span class="comment">// 0</span></span><br><span class="line"><span class="built_in">console</span>.log(Direction[<span class="number">0</span>]) <span class="comment">// up</span></span><br></pre></td></tr></table></figure>
 
-<p>从上述例子中可以看出枚举中实现了正反向同时映射，平常的例子中，一般都是正向映射，比如一个对象，key =&gt; value；</p>
+<p>从上述例子中可以看出枚举中实现了正反向同时映射，平常的例子中，一般都是正向映射，比如一个对象，<code>key =&gt; value</code>；</p>
 <p>直接看看枚举编译后的JS代码：</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> Direction;</span><br><span class="line">(<span class="function"><span class="keyword">function</span> (<span class="params">Direction</span>) </span>&#123;</span><br><span class="line">		Direction[Direction[<span class="string">&#x27;up&#x27;</span>] = <span class="number">0</span>] = <span class="string">&#x27;up&#x27;</span>;</span><br><span class="line">  	<span class="comment">// ...</span></span><br><span class="line">&#125;) (Direction || (Direction = &#123;&#125;));</span><br></pre></td></tr></table></figure>
 
@@ -144,14 +144,14 @@
 
 
 
-<p><strong>类型编程：编写一个工具类型将interface中函数类型的名称取出来</strong></p>
+<p><strong>类型编程：编写一个工具类型将<code>interface</code>中函数类型的名称取出来</strong></p>
 <figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Part &#123;</span><br><span class="line">    <span class="attr">id</span>: <span class="built_in">number</span>;</span><br><span class="line">    name: <span class="built_in">string</span>;</span><br><span class="line">    subParts: Part[];</span><br><span class="line">    updatePart(newName: <span class="built_in">string</span>): <span class="built_in">void</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> FunctionPropName&lt;T&gt; = &#123;[K <span class="keyword">in</span> keyof T]: T[K] <span class="keyword">extends</span> <span class="built_in">Function</span> ? K: <span class="built_in">never</span>&#125;[keyof T];</span><br><span class="line"><span class="keyword">type</span> funcName = FunctionPropName&lt;Part&gt;; <span class="comment">// type funcName = &#x27;updatePart&#x27;</span></span><br></pre></td></tr></table></figure>
 
 
 
 
 
-<p><strong>类型编程：取出下面interface中的可选类型（利用空对象进行扩展甄别，网上看到的一种方法，很巧妙）</strong></p>
+<p><strong>类型编程：取出下面<code>interface</code>中的可选类型（利用空对象进行扩展甄别，网上看到的一种方法，很巧妙）</strong></p>
 <figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> People &#123;</span><br><span class="line">    <span class="keyword">readonly</span> n: <span class="built_in">number</span>;</span><br><span class="line">    id: <span class="built_in">string</span>;</span><br><span class="line">    name: <span class="built_in">string</span>;</span><br><span class="line">    age?: <span class="built_in">number</span>;</span><br><span class="line">    <span class="keyword">from</span>?: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> OptionalKeys&lt;T&gt; = &#123;[K <span class="keyword">in</span> keyof T]-?: (&#123;&#125; <span class="keyword">extends</span> &#123;[P <span class="keyword">in</span> K]: T[P]&#125; ? K : <span class="built_in">never</span>)&#125;[keyof T];</span><br><span class="line"><span class="keyword">type</span> r = OptionalKeys&lt;People&gt;; <span class="comment">// &#x27;age&#x27;|&#x27;from&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 必须属性</span></span><br><span class="line"><span class="keyword">type</span> RequiredKeys&lt;T&gt; = &#123;[K <span class="keyword">in</span> keyof T]-?: (&#123;&#125; <span class="keyword">extends</span> &#123;[P <span class="keyword">in</span> K]: T[P]&#125; ? <span class="built_in">never</span> : K)&#125;[keyof T];</span><br></pre></td></tr></table></figure>
 
       </div>

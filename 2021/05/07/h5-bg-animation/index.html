@@ -84,70 +84,71 @@
     <div class="lx-entry padding">
       <div>
         <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>通常来说，一个元素，动往往比静更能吸引用户眼球。针对于H5页面的背景，炫酷的背景动画特效能定向助力传播和品牌打造。本文将介绍几种常见的H5中背景动效的制作手法。</p>
-<h2 id="一、GIF"><a href="#一、GIF" class="headerlink" title="一、GIF"></a>一、GIF</h2><p>gif图片擅长于制作循环的小动画，使用gif有以下几个条件：</p>
+<h2 id="一、GIF"><a href="#一、GIF" class="headerlink" title="一、GIF"></a>一、GIF</h2><p><code>gif</code>图片擅长于制作循环的小动画，使用<code>gif</code>有以下几个条件：</p>
 <pre><code>1. 动画是循环的，首尾相接
 2. 每次循环的时间必须要短，否则gif的资源会很大，影响页面的加载速度
 </code></pre>
 <p>来看一个OPPO开发者大会的例子：<a target="_blank" rel="noopener" href="https://open.oppomobile.com/odc20/mobile/">https://open.oppomobile.com/odc20/mobile/</a></p>
-<img src="/images/h5-bg-animation/1.gif" width="300" alt="1" align="center">
+<img src="/images/h5-bg-animation/1.gif" width = "300" alt="1" align=center />
 
 <p>后面的背景动效具体代码如下：</p>
-<img src="/images/h5-bg-animation/2.png" width="800" alt="1" align="center">
+<img src="/images/h5-bg-animation/2.png" width = "800" alt="1" align=center />
 
-<p>img中的src指向了一个gif。</p>
-<p>这个gif体积大小为1.8M，时长为1s。</p>
-<p>可以看到，虽然只有1s的gif，但体积大小已经到了1.8M，针对于H5页面来说已经挺大了。</p>
-<p>所以，若不是简短的循环动画，不推荐使用gif方案。并且，在设计动效时，需要与美术同学沟通好，不能让其随意发挥，不然可能最后拿到的gif资源过大，导致该方案行不通。</p>
+<p><code>img</code>中的<code>src</code>指向了一个<code>gif</code>。</p>
+<p>这个<code>gif</code>体积大小为<code>1.8M</code>，时长为<code>1s</code>。</p>
+<p>可以看到，虽然只有<code>1s</code>的<code>gif</code>，但体积大小已经到了<code>1.8M</code>，针对于H5页面来说已经挺大了。</p>
+<p>所以，若不是简短的循环动画，不推荐使用<code>gif</code>方案。并且，在设计动效时，需要与美术同学沟通好，<br>不能让其随意发挥，不然可能最后拿到的<code>gif</code>资源过大，导致该方案行不通。</p>
 <p><strong>关键点：循环，简短，体积小，时间短。</strong></p>
 <p><strong>优点：实现简单，动画效果细腻</strong></p>
 <p><strong>缺点：限制较多，资源较大，影响页面性能</strong></p>
 <h2 id="二、帧动画"><a href="#二、帧动画" class="headerlink" title="二、帧动画"></a>二、帧动画</h2><p>帧动画的设计有如下两种，基本原理是一致的：</p>
 <ol>
-<li>通过一张张图片切换实现动画效果。在vue框架中，就可以先加载好图片，然后利用v-show进行图片切换</li>
-<li>将逐帧图片放到一张长图中，利用css控制图片展示的位置，来实现动画的效果，这种方案需要设计配合输出一张帧动画长图</li>
+<li>通过一张张图片切换实现动画效果。在<code>vue</code>框架中，就可以先加载好图片，然后利用<code>v-show</code>进行图片切换</li>
+<li>将逐帧图片放到一张长图中，利用<code>css</code>控制图片展示的位置，来实现动画的效果，这种方案需要设计配合输出一张帧动画长图</li>
 </ol>
-<h4 id="1、切换图片实现"><a href="#1、切换图片实现" class="headerlink" title="1、切换图片实现"></a>1、切换图片实现</h4><img src="/images/h5-bg-animation/3.gif" width="300" alt="3" align="center">
+<h4 id="1、切换图片实现"><a href="#1、切换图片实现" class="headerlink" title="1、切换图片实现"></a>1、切换图片实现</h4><img src="/images/h5-bg-animation/3.gif" width = "300" alt="3" align=center />
 
-<p>以上是商店某次活动的效果gif图，图中闪电效果以及手机转动效果均是利用切换图片来实现的帧动画。文末会附上这次活动项目的代码：vbase.zip。</p>
+<p>以上某次活动的效果<code>gif</code>图，图中闪电效果以及手机转动效果均是利用切换图片来实现的帧动画。</p>
 <p>拿闪电效果举例：</p>
 <ul>
 <li>素材有以下4张图片</li>
 </ul>
-<img src="/images/h5-bg-animation/4.png" width="100" alt="4" align="center">
-<img src="/images/h5-bg-animation/5.png" width="100" alt="4" align="center">
-<img src="/images/h5-bg-animation/6.png" width="100" alt="4" align="center">
-<img src="/images/h5-bg-animation/7.png" width="100" alt="4" align="center">
+<img src="/images/h5-bg-animation/4.png" width = "100" alt="4" align=center />
+<img src="/images/h5-bg-animation/5.png" width = "100" alt="4" align=center />
+<img src="/images/h5-bg-animation/6.png" width = "100" alt="4" align=center />
+<img src="/images/h5-bg-animation/7.png" width = "100" alt="4" align=center />
 
 
 <ul>
-<li>在页面启动时，可以在页面中创建6个img标签，并将各个图片的地址赋值给各个img的src属性，并且这几个img的display都为none，不展示（也可以展示第一张作为过渡，等所有图片加载出来后再开始执行动画）</li>
-<li>通过setInterval函数，控制好图片展示的时间以及切换，便可实现动画效果。</li>
+<li>在页面启动时，可以在页面中创建6个<code>img</code>标签，并将各个图片的地址赋值给各个<code>img</code>的<code>src</code>属性，<br>并且这几个<code>img</code>的<code>display</code>都为<code>none</code>，不展示（也可以展示第一张作为过渡，等所有图片加载出来后再开始执行动画）</li>
+<li>通过<code>setInterval</code>函数，控制好图片展示的时间以及切换，便可实现动画效果。</li>
 </ul>
-<h4 id="2、长图滑动图片实现"><a href="#2、长图滑动图片实现" class="headerlink" title="2、长图滑动图片实现"></a>2、长图滑动图片实现</h4><img src="/images/h5-bg-animation/10.png" width="300" alt="4" align="center">
+<h4 id="2、长图滑动图片实现"><a href="#2、长图滑动图片实现" class="headerlink" title="2、长图滑动图片实现"></a>2、长图滑动图片实现</h4><img src="/images/h5-bg-animation/10.png" width = "300" alt="4" align=center />
 
 
 
-<p>上图的动画效果是利用一张等间距的动画分解逐帧图片（类似雪碧图），由js脚本模拟编写或是使用css3新属性step()制作而成的。</p>
-<p>step()在移动端的兼容性是很好的，但使用比较小众。逐帧动画和GIF动画的差别在于，脚本可以控制逐帧动画的快慢和动作的暂停，而GIF动画无法在后期通过代码进行动画速率及透明度的修改。</p>
-<p>以下是CSS代码的实现：</p>
-<img src="/images/h5-bg-animation/11.png" width="500" alt="4" align="center">
+<p>上图的动画效果是利用一张等间距的动画分解逐帧图片（类似雪碧图），由<code>js</code>脚本模拟编写或是使用<code>css3</code>新属性<code>step()</code>制作而成的。</p>
+<p><code>step()</code>在移动端的兼容性是很好的，但使用比较小众。逐帧动画和<code>GIF</code>动画的差别在于，<br>脚本可以控制逐帧动画的快慢和动作的暂停，而<code>GIF</code>动画无法在后期通过代码进行动画速率及透明度的修改。</p>
+<p>以下是<code>CSS</code>代码的实现：</p>
+<img src="/images/h5-bg-animation/11.png" width = "500" alt="4" align=center />
 
-<p>通过animation属性控制背景图片展示的位置来实现帧动画效果。</p>
+<p>通过<code>animation</code>属性控制背景图片展示的位置来实现帧动画效果。</p>
 <p>以上两种方案都需要手头有帧动画的逐帧图片，若手上只有设计师给的动画效果视频怎么办？</p>
 <p>这里有一个不错的网站推荐给大家：<a target="_blank" rel="noopener" href="https://www.img2go.com/convert-to-jpg%EF%BC%88%E5%82%BB%E7%93%9C%E5%BC%8F%E8%A7%86%E9%A2%91%E8%BD%AC%E5%B8%A7%E5%8A%A8%E7%94%BB%E5%9B%BE%E7%89%87%E5%B7%A5%E5%85%B7%EF%BC%89">https://www.img2go.com/convert-to-jpg（傻瓜式视频转帧动画图片工具）</a></p>
 <p><strong>优点：兼容性好，实现难度不高</strong></p>
 <p><strong>缺点：资源较大影响性能，动画可能不够细腻</strong></p>
-<h2 id="三、SVG"><a href="#三、SVG" class="headerlink" title="三、SVG"></a>三、SVG</h2><img src="/images/h5-bg-animation/12.gif" width="300" alt="4" align="center">
+<h2 id="三、SVG"><a href="#三、SVG" class="headerlink" title="三、SVG"></a>三、SVG</h2><img src="/images/h5-bg-animation/12.gif" width = "300" alt="4" align=center />
 
-<p>上图是SVG实现的一个简单的背景动效，具体的实现难度与动画的复杂程度有关，有兴趣的同学可以进一步研究SVG动画：<a target="_blank" rel="noopener" href="https://aotu.io/notes/2017/01/22/snapsvg/index.html">https://aotu.io/notes/2017/01/22/snapsvg/index.html</a></p>
-<p>SVG动画效果以线条、形状变化为主，需要根据具体的场景来决策是否要使用svg进行实现。</p>
+<p>上图是<code>SVG</code>实现的一个简单的背景动效，具体的实现难度与动画的复杂程度有关，<br>有兴趣的同学可以进一步研究<code>SVG</code>动画：<a target="_blank" rel="noopener" href="https://aotu.io/notes/2017/01/22/snapsvg/index.html">https://aotu.io/notes/2017/01/22/snapsvg/index.html</a></p>
+<p><code>SVG</code>动画效果以线条、形状变化为主，需要根据具体的场景来决策是否要使用<code>svg</code>进行实现。</p>
 <p><strong>优点：兼容性好，性能佳</strong></p>
 <p><strong>缺点：实现复杂</strong></p>
-<h2 id="四、video"><a href="#四、video" class="headerlink" title="四、video"></a>四、video</h2><p>使用video标签来设置背景的好处就在于：可以直接引入视频，且无需过多的代码设计，简单粗暴。但由于H5端各个浏览器以及平台对video标签的处理不尽相同，且无法自动播放，还有可能被浏览器拦截，所以video标签作为背景在PC端上使用得更多，H5端要使用的话必须要平台支持video标签自动播放。</p>
-<p>比如在各个手机端的浏览器中基本上是无法自动播放的，而在应用商店或者某些平台的webView中，是可以设置video自动播放，此时就能使用video标签作为背景，引入一个视频，使用方法也很简单：设置一个video标签，配置一些相应的属性即可。video标签的mdn文档：<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/video">https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/video</a></p>
+<h2 id="四、video"><a href="#四、video" class="headerlink" title="四、video"></a>四、video</h2><p>使用<code>video</code>标签来设置背景的好处就在于：可以直接引入视频，且无需过多的代码设计，简单粗暴。<br>但由于H5端各个浏览器以及平台对video标签的处理不尽相同，且无法自动播放，还有可能被浏览器拦截，<br>所以<code>video</code>标签作为背景在PC端上使用得更多，H5端要使用的话必须要平台支持<code>video</code>标签自动播放。</p>
+<p>比如在各个手机端的浏览器中基本上是无法自动播放的，而在应用商店或者某些平台的<code>webView</code>中，<br>是可以设置video自动播放，此时就能使用<code>video</code>标签作为背景，引入一个视频，使用方法也很简单：<br>设置一个<code>video</code>标签，配置一些相应的属性即可。<br>video标签的mdn文档：<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/video">https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/video</a></p>
 <p><strong>优点：实现简单</strong></p>
 <p><strong>缺点：H5上对自动播放的兼容性差，无法自动播放时便无法使用此方法进行实现</strong></p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>上述简单总结阐述了四种背景动效的实现方案，分别是gif、逐帧动画、SVG、video，每种方案都有其相应的优缺点，具体的使用需要根据具体场景去分析。在制作背景动效的过程中作为开发人员有以下几点需要注意：</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>上述简单总结阐述了四种背景动效的实现方案，分别是<code>gif</code>、<code>逐帧动画</code>、<code>SVG</code>、<code>video</code>，每种方案都有其相应的优缺点，具体的使用需要根据具体场景去分析。</p>
+<p>在制作背景动效的过程中作为开发人员有以下几点需要注意：</p>
 <ul>
 <li>有问题及时与设计师沟通，效果无法实现的时候尝试与设计师探讨B方案，比如换用一种效果，或者以可以实现的效果平缓过渡，保证用户体验的同时不会严重影响视觉效果</li>
 <li>在设计师出完设计动效之后，必须进行评审，明确通知产品以及设计师哪些效果可以做，哪些效果做起来成本会很高，从项目初期就确定好整体的效果以及实现方案。这样做是为了后续保证项目质量以及不会因为动效实现难而导致延期或者不做</li>
